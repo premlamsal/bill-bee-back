@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 class CustomerController extends Controller
 {
     public function index(){
-        
         return CustomerResource::collection(Customer::paginate(8));
     }
     public function store(Request $request){
