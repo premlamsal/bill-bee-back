@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class CustomerController extends Controller
 {
     public function index(){
-        return CustomerResource::collection(Customer::paginate(8));
+        return CustomerResource::collection(Customer::orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request){
         $this->validate($request, [
@@ -48,10 +48,24 @@ class CustomerController extends Controller
         $customer->custom_customer_id = $custom_customer_id;
         $customer->store_id = $store_id;
         if($customer->save()){
-            return response()->json([
-                'msg' => 'Customer added successfully',
-                'status' => 'success',
-            ]);
+
+            $store->customer_id_count = $custom_customer_id;
+
+            if ($store->save()) {
+
+                return response()->json([
+                    'msg' => 'Customer added successfully',
+                    'status' => 'success',
+                ]);
+    
+            }
+            else{
+                return response()->json([
+                    'msg' => 'Failed to update data to store ',
+                    'status' => 'error',
+                ]);
+            }
+           
         }else{
             return response()->json([
                 'msg' => 'Customer fail to add ',

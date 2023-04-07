@@ -5,63 +5,96 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use App\Models\InvoiceDetail;
+use App\Models\Store;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
         return InvoiceResource::collection(Invoice::with('invoiceDetail')->orderBy('updated_at', 'desc')->paginate(8));
     }
-   
-     public function store(Request $request){
-        
-        
-        $store_id=1;
-        $store_tax=0.13;
-        
-    //collecting data
-       $items = collect($request->items)->transform(function ($item) {
-        $item['line_total'] = $item['quantity'] * $item['price'];
-        return new InvoiceDetail($item);
-    });
 
-    if ($items->isEmpty()) {
-        return response()
-            ->json([
-                'items_empty' => 'One or more Item is required.',
-            ], 422);
-    }
+    public function store(Request $request)
+    {
+        $invoice_status_save = false;
 
+        $store_id = 1;
 
+        $store = Store::findOrFail($store_id);
 
-    $data = $request->info;
-    if(array_key_exists('discount', $data)){
-        $data['grand_total'] = $data['sub_total'] + $data['tax_amount'] - $data['discount'];
-    }
+        $store_tax_percentage = $store->tax_percentage;
 
-    $data['sub_total'] = $items->sum('line_total');
+        $store_tax = $store_tax_percentage / 100;
 
-    $data['discount'] = 0;
+        //old invoice id
+        $invoice_id_count = $store->invoice_id_count;
 
-    $data['status'] = 0;
+        //explode invoice id from database
 
-    $data['tax_amount'] = $data['sub_total'] * $store_tax;
+        $custom_invoice_id = explode('-', $invoice_id_count);
 
-    $data['grand_total'] = $data['sub_total'] + $data['tax_amount'];
+        $custom_invoice_id[1] = $custom_invoice_id[1] + 1; //increase invoice
 
-    $data['store_id'] = $store_id;
-
-    //transaction started
-
-    $invoice = Invoice::create($data);
-
-    $invoice->invoiceDetail()->saveMany($items);
+        //new custom_invoice_id
+        $new_count_invoice_id = implode('-', $custom_invoice_id);
 
 
-    $jsonResponse = ['msg' => 'Successfully created invoice & customer transactions', 'status' => 'success'];
-    return response()->json($jsonResponse);
 
-    
+        //collecting data
+        $items = collect($request->items)->transform(function ($item) {
+            $item['line_total'] = $item['quantity'] * $item['price'];
+            return new InvoiceDetail($item);
+        });
+
+        if ($items->isEmpty()) {
+            return response()
+                ->json([
+                    'items_empty' => 'One or more Item is required.',
+                ], 422);
+        }
+
+
+
+        $data = $request->info;
+        if (array_key_exists('discount', $data)) {
+            $data['grand_total'] = $data['sub_total'] + $data['tax_amount'] - $data['discount'];
+        }
+
+        $data['sub_total'] = $items->sum('line_total');
+
+        $data['discount'] = 0;
+
+        $data['status'] = 0;
+
+        $data['tax_amount'] = $data['sub_total'] * $store_tax;
+
+        $data['grand_total'] = $data['sub_total'] + $data['tax_amount'];
+
+        $data['store_id'] = $store_id;
+
+        $data['custom_invoice_id'] = $new_count_invoice_id;
+
+        //transaction started
+
+        $invoice = Invoice::create($data);
+
+        $invoice->invoiceDetail()->saveMany($items);
+
+        //set current invoice_id_count to store table
+        $store->invoice_id_count = $new_count_invoice_id;
+
+        if ($store->save()) {
+            $invoice_status_save = true;
+        } else {
+
+            $jsonResponse = ['msg' => 'Failed updating the Data to the store.', 'status' => 'error'];
+        }
+        if ($invoice_status_save) {
+
+            $jsonResponse = ['msg' => 'Successfully created invoice & update store data ', 'status' => 'success'];
+        }
+        return response()->json($jsonResponse);
     }
 }

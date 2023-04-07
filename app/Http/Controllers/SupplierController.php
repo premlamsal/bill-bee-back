@@ -11,13 +11,14 @@ class SupplierController extends Controller
 {
     public function index()
     {
-        return supplierResource::collection(supplier::paginate(8));
+        return supplierResource::collection(supplier::orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request)
     {
 
         //let store =1;
         $store_id = 1;
+
         $store = Store::findOrFail($store_id);
 
         $supplier_id_count = $store->supplier_id_count;
@@ -49,10 +50,19 @@ class SupplierController extends Controller
         $supplier->custom_supplier_id = $custom_supplier_id;
         $supplier->store_id = $store_id;
         if ($supplier->save()) {
-            return response()->json([
-                'msg' => 'supplier added successfully',
-                'status' => 'success',
-            ]);
+            $store->supplier_id_count = $custom_supplier_id;
+
+            if ($store->save()) {
+                return response()->json([
+                    'msg' => 'supplier added successfully',
+                    'status' => 'success',
+                ]);
+            } else {
+                return response()->json([
+                    'msg' => 'failed to update store data ',
+                    'status' => 'error',
+                ]);
+            }
         } else {
             return response()->json([
                 'msg' => 'supplier fail to add ',
