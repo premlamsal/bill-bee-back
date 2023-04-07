@@ -121,8 +121,8 @@ class SupplierController extends Controller
     public function show($id)
     {
 
-        $supplier = supplier::where('id', $id)->first();
-        if ($supplier->save()) {
+        $supplier = Supplier::where('id', $id)->first();
+        if ($supplier) {
             return response()->json([
                 'msg' => 'supplier fetched successfully',
                 'supplier' => $supplier,

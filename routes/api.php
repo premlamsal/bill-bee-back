@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,19 @@ Route::post('/product/search', [ProductController::class,'searchProduct']);
 
 //invoice
 Route::post('/invoice/create', [InvoiceController::class,'store']);
+
+Route::post('/invoice/edit', [InvoiceController::class,'update']);
+
+
 Route::get('/invoices', [InvoiceController::class,'index']);
 
+Route::get('/invoice/{id}', [InvoiceController::class,'show']);
+
+
+//store
+
+Route::get('/store/{id}', [StoreController::class,'show']);
+
+
+//end of store
 

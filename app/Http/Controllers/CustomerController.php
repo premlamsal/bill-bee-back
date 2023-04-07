@@ -122,7 +122,7 @@ class CustomerController extends Controller
     public function show($id){
 
         $customer = Customer::where('id', $id)->first();
-        if ($customer->save()) {
+        if ($customer) {
             return response()->json([
                 'msg'=>'Customer fetched successfully',
                 'customer' => $customer,
