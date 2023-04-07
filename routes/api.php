@@ -26,6 +26,10 @@ Route::get('/customers', [CustomerController::class,'index']);
 
 Route::post('/customer/add', [CustomerController::class,'store']);
 
+Route::post('/customer/edit', [CustomerController::class,'update']);
+
+Route::get('/customer/{id}', [CustomerController::class,'show']);
+
 Route::post('/customers/search', [CustomerController::class,'searchCustomers']);
 //end of customer
 
