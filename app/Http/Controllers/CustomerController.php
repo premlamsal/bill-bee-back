@@ -46,7 +46,7 @@ class CustomerController extends Controller
         $this->validate($request, [
             'name' => 'required|regex:/^[\pL\s\-]+$/u',
             'address' => 'required|string|max:200',
-            'phone' => 'required|unique:customers,phone|digits:10',
+            'phone' => 'required|digits:10',
             'details' => 'required|string|max:400',
             'opening_balance' => 'required|numeric',
 
@@ -92,7 +92,7 @@ class CustomerController extends Controller
         $customer = Customer::where('id', $id)->first();
         if ($customer->save()) {
             return response()->json([
-                'msg'=>'customer fetched successfully',
+                'msg'=>'Customer fetched successfully',
                 'customer' => $customer,
                 'status' => 'success',
             ]);
