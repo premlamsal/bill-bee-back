@@ -195,10 +195,7 @@ class InvoiceController extends Controller
     }
     public function show($id)
     {
-
-
-
-        $invoice = Invoice::where('custom_invoice_id', $id)->with('invoiceDetail')->first();
+        $invoice = Invoice::where('custom_invoice_id', $id)->with('invoiceDetail.product.unit')->with('customer')->first();
         if ($invoice) {
             return response()->json([
                 'msg' => 'Invoices fetched successfully',
