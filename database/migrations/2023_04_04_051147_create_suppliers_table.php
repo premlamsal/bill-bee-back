@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('custom_supplier_id')->nullable();
+            $table->string('custom_supplier_id');
             $table->string('address');
-            $table->string('phone')->nullable();
-            $table->string('opening_balance')->nullable();
+            $table->string('phone');
+            $table->string('opening_balance');
             $table->text('details')->nullable();
             $table->unsignedBigInteger('store_id');
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
