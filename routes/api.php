@@ -36,6 +36,13 @@ Route::post('/customers/search', [CustomerController::class,'searchCustomers']);
 //supplier
 Route::get('/suppliers', [SupplierController::class,'index']);
 
+Route::post('/supplier/add', [SupplierController::class,'store']);
+
+Route::post('/supplier/edit', [SupplierController::class,'update']);
+
+Route::get('/supplier/{id}', [SupplierController::class,'show']);
+
+
 Route::post('/suppliers/search', [SupplierController::class,'searchCustomers']);
 //end of customer
 
