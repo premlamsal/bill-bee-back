@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //customer
 Route::get('/customers', [CustomerController::class,'index']);
 
+Route::post('/customer/add', [CustomerController::class,'store']);
+
 Route::post('/customers/search', [CustomerController::class,'searchCustomers']);
 //end of customer
 

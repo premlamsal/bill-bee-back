@@ -14,14 +14,21 @@ class CustomerController extends Controller
         return CustomerResource::collection(Customer::paginate(8));
     }
     public function store(Request $request){
+        $this->validate($request, [
+            'name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'address' => 'required|string|max:200',
+            'phone' => 'required|unique:customers,phone|digits:10',
+            'details' => 'required|string|max:400',
+            'opening_balance' => 'required|numeric',
 
+        ]);
         $customer = new Customer();
         $customer->name = $request->input('name');
         $customer->address = $request->input('address');
         $customer->phone = $request->input('phone');
         $customer->details = $request->input('details');
-        // $customer->opening_balance = $request->input('opening_balance');
-        $customer->store_id = 0;
+        $customer->opening_balance = $request->input('opening_balance');
+        $customer->store_id = 1;
         if($customer->save()){
             return response()->json([
                 'msg' => 'Customer added successfully',
