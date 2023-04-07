@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,13 +23,30 @@ class CustomerController extends Controller
             'opening_balance' => 'required|numeric',
 
         ]);
+
+
+        //let store =1;
+        $store_id = 1;
+        $store = Store::findOrFail($store_id);
+        
+        $customer_id_count = $store->customer_id_count;
+
+        //explode customer id from database
+
+        $custom_customer_id = explode('-', $customer_id_count);
+
+        $custom_customer_id[1] = $custom_customer_id[1] + 1; //increase customer count
+
+        //new custom_customer_id
+        $custom_customer_id = implode('-', $custom_customer_id);
         $customer = new Customer();
         $customer->name = $request->input('name');
         $customer->address = $request->input('address');
         $customer->phone = $request->input('phone');
         $customer->details = $request->input('details');
         $customer->opening_balance = $request->input('opening_balance');
-        $customer->store_id = 1;
+        $customer->custom_customer_id = $custom_customer_id;
+        $customer->store_id = $store_id;
         if($customer->save()){
             return response()->json([
                 'msg' => 'Customer added successfully',
