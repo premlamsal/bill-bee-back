@@ -18,6 +18,24 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
+
+        // //validation
+        $this->validate($request, [
+
+            'info.note' => 'required | string |max:200',
+            'info.customer_name' => 'required | string| max:200',
+            'info.customer_id' => 'required',
+            'info.due_date' => 'required | date',
+            'info.invoice_date' => 'required | date',
+            'info.customer_id' => 'required',
+            'info.discount' => 'required | numeric| max:200',
+
+            'items.*.product_name' => 'required | string |max:200',
+            'items.*.price' => 'required | numeric',
+            'items.*.quantity' => 'required | numeric',
+
+        ]);
+
         $invoice_status_save = false;
 
         $store_id = 1;
@@ -97,9 +115,27 @@ class InvoiceController extends Controller
         }
         return response()->json($jsonResponse);
     }
-    public function update(Request $request){
+    public function update(Request $request)
+    {
+        //validation
+        $this->validate($request, [
 
-        $store_id=1;
+            'info.note' => 'required | string |max:200',
+            'info.customer_name' => 'required | string| max:200',
+            'info.customer_id' => 'required',
+            'info.due_date' => 'required | date',
+            'info.invoice_date' => 'required | date',
+            'info.customer_id' => 'required',
+            'info.discount' => 'required | numeric| max:200',
+
+            'items.*.product_name' => 'required | string |max:200',
+            'items.*.price' => 'required | numeric',
+            'items.*.quantity' => 'required | numeric',
+
+        ]);
+
+
+        $store_id = 1;
 
         $id = $request->id; //we will get invoice id here
 
@@ -146,7 +182,7 @@ class InvoiceController extends Controller
 
         if ($invoice) {
             return response()->json([
-                'msg'=>'Invoices updated successfully',
+                'msg' => 'Invoices updated successfully',
                 'invoice' => $invoice,
                 'status' => 'success',
             ]);
@@ -154,21 +190,18 @@ class InvoiceController extends Controller
             return response()->json([
                 'msg' => 'Error while updating Invoice',
                 'status' => 'danger',
-            ],500);
+            ], 500);
         }
-
-
-
-
     }
-    public function show($id){
+    public function show($id)
+    {
 
-      
+
 
         $invoice = Invoice::where('custom_invoice_id', $id)->with('invoiceDetail')->first();
         if ($invoice) {
             return response()->json([
-                'msg'=>'Invoices fetched successfully',
+                'msg' => 'Invoices fetched successfully',
                 'invoice' => $invoice,
                 'status' => 'success',
             ]);
@@ -176,8 +209,7 @@ class InvoiceController extends Controller
             return response()->json([
                 'msg' => 'Error while retriving Invoice',
                 'status' => 'danger',
-            ],500);
+            ], 500);
         }
-
     }
 }
