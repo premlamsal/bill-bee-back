@@ -9,18 +9,24 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    public function index()
-    {
-        return supplierResource::collection(supplier::orderBy('updated_at', 'desc')->paginate(8));
+    public function index(){
+        return SupplierResource::collection(Supplier::orderBy('updated_at', 'desc')->paginate(8));
     }
-    public function store(Request $request)
-    {
+    public function store(Request $request){
+        $this->validate($request, [
+            'name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'address' => 'required|string|max:200',
+            'phone' => 'required|unique:suppliers,phone|digits:10',
+            'details' => 'required|string|max:400',
+            'opening_balance' => 'required|numeric',
+
+        ]);
+
 
         //let store =1;
         $store_id = 1;
-
         $store = Store::findOrFail($store_id);
-
+        
         $supplier_id_count = $store->supplier_id_count;
 
         //explode supplier id from database
@@ -31,17 +37,7 @@ class SupplierController extends Controller
 
         //new custom_supplier_id
         $custom_supplier_id = implode('-', $custom_supplier_id);
-
-
-        $this->validate($request, [
-            'name' => 'required|regex:/^[\pL\s\-]+$/u',
-            'address' => 'required|string|max:200',
-            'phone' => 'required|unique:suppliers,phone|digits:10',
-            'details' => 'required|string|max:400',
-            'opening_balance' => 'required|numeric',
-
-        ]);
-        $supplier = new supplier();
+        $supplier = new Supplier();
         $supplier->name = $request->input('name');
         $supplier->address = $request->input('address');
         $supplier->phone = $request->input('phone');
@@ -49,29 +45,33 @@ class SupplierController extends Controller
         $supplier->opening_balance = $request->input('opening_balance');
         $supplier->custom_supplier_id = $custom_supplier_id;
         $supplier->store_id = $store_id;
-        if ($supplier->save()) {
+        if($supplier->save()){
+
             $store->supplier_id_count = $custom_supplier_id;
 
             if ($store->save()) {
+
                 return response()->json([
-                    'msg' => 'supplier added successfully',
+                    'msg' => 'Supplier added successfully',
                     'status' => 'success',
                 ]);
-            } else {
+    
+            }
+            else{
                 return response()->json([
-                    'msg' => 'failed to update store data ',
+                    'msg' => 'Failed to update data to store ',
                     'status' => 'error',
                 ]);
             }
-        } else {
+           
+        }else{
             return response()->json([
-                'msg' => 'supplier fail to add ',
+                'msg' => 'Supplier fail to add ',
                 'status' => 'error',
             ]);
         }
     }
-    public function update(Request $request)
-    {
+    public function update(Request $request){
 
         $this->validate($request, [
             'name' => 'required|regex:/^[\pL\s\-]+$/u',
@@ -83,70 +83,69 @@ class SupplierController extends Controller
         ]);
 
         $id = $request->input('id'); //get id from edit modal
-        $supplier = supplier::where('id', $id)->first();
+        $supplier = Supplier::where('id', $id)->first();
         $supplier->name = $request->input('name');
         $supplier->address = $request->input('address');
         $supplier->phone = $request->input('phone');
         $supplier->details = $request->input('details');
         $supplier->opening_balance = $request->input('opening_balance');
-        // $supplier->store_id = 1;
-        if ($supplier->save()) {
+        $supplier->store_id = 1;
+        if($supplier->save()){
             return response()->json([
-                'msg' => 'supplier updated successfully',
+                'msg' => 'Supplier updated successfully',
                 'status' => 'success',
             ]);
-        } else {
+        }else{
             return response()->json([
-                'msg' => 'supplier fail to update ',
+                'msg' => 'Supplier fail to update ',
                 'status' => 'error',
             ]);
         }
     }
-    public function destroy($id)
-    {
+    public function destroy($id){
 
-        $supplier = supplier::where('id', $id)->first();
+        $supplier = Supplier::where('id', $id)->first();
         if ($supplier->delete()) {
             return response()->json([
-                'msg' => 'supplier deleted successfully',
+                'msg' => 'Supplier deleted successfully',
                 'status' => 'success',
             ]);
-        } else {
+        }else{
             return response()->json([
-                'msg' => 'supplier deletion failed',
+                'msg' => 'Supplier deletion failed',
                 'status' => 'error',
             ]);
         }
     }
-    public function show($id)
-    {
+    public function show($id){
 
         $supplier = Supplier::where('id', $id)->first();
         if ($supplier) {
             return response()->json([
-                'msg' => 'supplier fetched successfully',
+                'msg'=>'Supplier fetched successfully',
                 'supplier' => $supplier,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving supplier',
+                'msg' => 'Error while retriving Supplier',
                 'status' => 'error',
             ]);
         }
     }
 
-    public function searchsuppliers(Request $request)
+    public function searchSuppliers(Request $request)
     {
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
-            return supplierResource::collection(supplier::where('name', 'like', '%' . $searchKey . '%')->get());
+            return SupplierResource::collection(Supplier::where('name', 'like', '%' . $searchKey . '%')->get());
         } else {
             return response()->json([
-                'msg' => 'Error while retriving supplier. No Data Supplied as key.',
+                'msg' => 'Error while retriving Supplier. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }
     }
+
 }

@@ -28,7 +28,7 @@ class InvoiceController extends Controller
             'info.due_date' => 'required | date',
             'info.invoice_date' => 'required | date',
             'info.customer_id' => 'required',
-            'info.discount' => 'required | numeric| max:200',
+            'info.discount' => 'numeric| max:200',
 
             'items.*.product_name' => 'required | string |max:200',
             'items.*.price' => 'required | numeric',

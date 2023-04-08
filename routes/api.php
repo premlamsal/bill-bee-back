@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
@@ -44,7 +45,7 @@ Route::post('/supplier/edit', [SupplierController::class,'update']);
 Route::get('/supplier/{id}', [SupplierController::class,'show']);
 
 
-Route::post('/suppliers/search', [SupplierController::class,'searchCustomers']);
+Route::post('/suppliers/search', [SupplierController::class,'searchSuppliers']);
 //end of customer
 
 
@@ -71,4 +72,15 @@ Route::get('/store/{id}', [StoreController::class,'show']);
 
 
 //end of store
+
+//purchase
+Route::post('/purchase/create', [PurchaseController::class,'store']);
+
+Route::post('/purchase/edit', [PurchaseController::class,'update']);
+
+
+Route::get('/purchases', [PurchaseController::class,'index']);
+
+Route::get('/purchase/{id}', [PurchaseController::class,'show']);
+
 
