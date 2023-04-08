@@ -30,7 +30,22 @@ class ProductController extends Controller
 
         //let store =1;
         $store_id = 1;
-        
+
+        //let store =1;
+        $store_id = 1;
+        $store = Store::findOrFail($store_id);
+
+        $product_id_count = $store->product_id_count;
+
+        //explode product id from database
+
+        $custom_product_id = explode('-', $product_id_count);
+
+        $custom_product_id[1] = $custom_product_id[1] + 1; //increase product count
+
+        //new custom_product_id
+        $custom_product_id = implode('-', $custom_product_id);
+
         $product = new Product();
         $product->name = $request->input('name');
         $product->product_cat_id = $request->input('product_cat_id');
@@ -39,12 +54,30 @@ class ProductController extends Controller
         $product->sp = $request->input('sp');
         $product->description = $request->input('description');
         $product->opening_stock = $request->input('opening_stock');
+        $product->custom_product_id = $custom_product_id;
         $product->store_id = $store_id;
+        $product->image = "https://avatars.githubusercontent.com/u/24312128?v=4";
+        $product->store_id = $store_id;
+
+
         if ($product->save()) {
-            return response()->json([
-                'msg' => 'Product added successfully',
-                'status' => 'success',
-            ]);
+
+            $store->product_id_count = $custom_product_id;
+
+            if ($store->save()) {
+
+                return response()->json([
+                    'msg' => 'Customer added successfully',
+                    'status' => 'success',
+                ]);
+    
+            }
+            else{
+                return response()->json([
+                    'msg' => 'Failed to update data to store ',
+                    'status' => 'error',
+                ]);
+            }
         } else {
             return response()->json([
                 'msg' => 'Product fail to add ',
@@ -95,12 +128,13 @@ class ProductController extends Controller
 
 
 
-    public function show($id){
+    public function show($id)
+    {
 
         $product = Product::where('id', $id)->with('category')->with('unit')->first();
         if ($product) {
             return response()->json([
-                'msg'=>'Product fetched successfully',
+                'msg' => 'Product fetched successfully',
                 'product' => $product,
                 'status' => 'success',
             ]);
