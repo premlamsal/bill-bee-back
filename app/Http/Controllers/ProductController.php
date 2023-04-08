@@ -24,6 +24,8 @@ class ProductController extends Controller
             'sp' => 'required|numeric',
             'description' => 'required|string|max:200',
             'opening_stock' => 'required|numeric',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4048',
+
 
         ]);
 
@@ -56,7 +58,15 @@ class ProductController extends Controller
         $product->opening_stock = $request->input('opening_stock');
         $product->custom_product_id = $custom_product_id;
         $product->store_id = $store_id;
-        $product->image = "https://avatars.githubusercontent.com/u/24312128?v=4";
+        // $product->image = "https://avatars.githubusercontent.com/u/24312128?v=4";
+        //put some image code here
+
+        if ($request->hasFile('image')) {
+            $imageName = '/img/' . time() . '.' . $request->image->getClientOriginalExtension();
+            $request->image->move(public_path('img'), $imageName);
+            $product->image = $imageName;
+        }
+
         $product->store_id = $store_id;
 
 
@@ -70,9 +80,8 @@ class ProductController extends Controller
                     'msg' => 'Customer added successfully',
                     'status' => 'success',
                 ]);
-    
-            }
-            else{
+            } else {
+
                 return response()->json([
                     'msg' => 'Failed to update data to store ',
                     'status' => 'error',
@@ -112,7 +121,27 @@ class ProductController extends Controller
         $product->sp = $request->input('sp');
         $product->description = $request->input('description');
         $product->opening_stock = $request->input('opening_stock');
+
         $product->store_id = $store_id;
+
+        if ($request->hasFile('image')) {
+
+            $img_ext = $request->image->getClientOriginalExtension();
+
+            $checkExt = array("jpg", "png", "jpeg");
+
+            if (in_array($img_ext, $checkExt)) {
+
+                $imageName = '/img/' . time() . '.' . $request->image->getClientOriginalExtension();
+                $request->image->move(public_path('img'), $imageName);
+                $product->image = $imageName;
+            } else {
+                return response()->json([
+                    'msg' => 'Opps! My Back got cracked while working in Database',
+                    'status' => 'error',
+                ]);
+            }
+        }
         if ($product->save()) {
             return response()->json([
                 'msg' => 'Product updated successfully',
