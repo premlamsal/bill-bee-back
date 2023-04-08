@@ -62,7 +62,7 @@ class ProductController extends Controller
         //put some image code here
 
         if ($request->hasFile('image')) {
-            $imageName = '/img/' . time() . '.' . $request->image->getClientOriginalExtension();
+            $imageName = 'img/' . time() . '.' . $request->image->getClientOriginalExtension();
             $request->image->move(public_path('img'), $imageName);
             $product->image = $imageName;
         }
@@ -132,7 +132,7 @@ class ProductController extends Controller
 
             if (in_array($img_ext, $checkExt)) {
 
-                $imageName = '/img/' . time() . '.' . $request->image->getClientOriginalExtension();
+                $imageName = 'img/' . time() . '.' . $request->image->getClientOriginalExtension();
                 $request->image->move(public_path('img'), $imageName);
                 $product->image = $imageName;
             } else {
