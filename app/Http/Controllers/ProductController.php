@@ -77,7 +77,7 @@ class ProductController extends Controller
             if ($store->save()) {
 
                 return response()->json([
-                    'msg' => 'Customer added successfully',
+                    'msg' => 'Product added successfully',
                     'status' => 'success',
                 ]);
             } else {
