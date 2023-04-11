@@ -160,7 +160,7 @@ class ProductController extends Controller
     public function show($id)
     {
 
-        $product = Product::where('id', $id)->with('category')->with('unit')->first();
+        $product = Product::where('custom_product_id', $id)->with('category')->with('unit')->first();
         if ($product) {
             return response()->json([
                 'msg' => 'Product fetched successfully',

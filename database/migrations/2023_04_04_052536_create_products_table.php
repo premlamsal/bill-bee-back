@@ -19,7 +19,7 @@ return new class extends Migration
             
             $table->string('image');
             
-            $table->string('description');
+            $table->text('description');
 
             $table->decimal('cp');
 
