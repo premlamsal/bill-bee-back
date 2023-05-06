@@ -11,10 +11,23 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
-    public function index(){
+
+    public function __construct()
+    {
+
+        $this->middleware('auth:api');
+
+        // Auth::user()->name,
+
+    }
+    public function index()
+    {
+        $store_id= Auth::user()->stores[0]->id;
+        
         return CustomerResource::collection(Customer::orderBy('updated_at', 'desc')->paginate(8));
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $this->validate($request, [
             'name' => 'required|regex:/^[\pL\s\-]+$/u',
             'address' => 'required|string|max:200',
@@ -28,7 +41,7 @@ class CustomerController extends Controller
         //let store =1;
         $store_id = 1;
         $store = Store::findOrFail($store_id);
-        
+
         $customer_id_count = $store->customer_id_count;
 
         //explode customer id from database
@@ -47,7 +60,7 @@ class CustomerController extends Controller
         $customer->opening_balance = $request->input('opening_balance');
         $customer->custom_customer_id = $custom_customer_id;
         $customer->store_id = $store_id;
-        if($customer->save()){
+        if ($customer->save()) {
 
             $store->customer_id_count = $custom_customer_id;
 
@@ -57,23 +70,21 @@ class CustomerController extends Controller
                     'msg' => 'Customer added successfully',
                     'status' => 'success',
                 ]);
-    
-            }
-            else{
+            } else {
                 return response()->json([
                     'msg' => 'Failed to update data to store ',
                     'status' => 'error',
                 ]);
             }
-           
-        }else{
+        } else {
             return response()->json([
                 'msg' => 'Customer fail to add ',
                 'status' => 'error',
             ]);
         }
     }
-    public function update(Request $request){
+    public function update(Request $request)
+    {
 
         $this->validate($request, [
             'name' => 'required|regex:/^[\pL\s\-]+$/u',
@@ -92,19 +103,20 @@ class CustomerController extends Controller
         $customer->details = $request->input('details');
         $customer->opening_balance = $request->input('opening_balance');
         $customer->store_id = 1;
-        if($customer->save()){
+        if ($customer->save()) {
             return response()->json([
                 'msg' => 'Customer updated successfully',
                 'status' => 'success',
             ]);
-        }else{
+        } else {
             return response()->json([
                 'msg' => 'Customer fail to update ',
                 'status' => 'error',
             ]);
         }
     }
-    public function destroy($id){
+    public function destroy($id)
+    {
 
         $customer = Customer::where('id', $id)->first();
         if ($customer->delete()) {
@@ -112,19 +124,20 @@ class CustomerController extends Controller
                 'msg' => 'Customer deleted successfully',
                 'status' => 'success',
             ]);
-        }else{
+        } else {
             return response()->json([
                 'msg' => 'Customer deletion failed',
                 'status' => 'error',
             ]);
         }
     }
-    public function show($id){
+    public function show($id)
+    {
 
         $customer = Customer::where('id', $id)->first();
         if ($customer) {
             return response()->json([
-                'msg'=>'Customer fetched successfully',
+                'msg' => 'Customer fetched successfully',
                 'customer' => $customer,
                 'status' => 'success',
             ]);
@@ -149,5 +162,4 @@ class CustomerController extends Controller
             ]);
         }
     }
-
 }

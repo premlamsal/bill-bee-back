@@ -6,11 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -41,4 +41,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function stores()
+    {
+
+        return $this->belongsToMany('App\Models\Store', 'user_store', 'user_id', 'store_id');
+    }
+
+    public function hasStore($store)
+    {
+
+        $check = $this->stores()->where('store_id', $store);
+
+        if ($check->first()) {
+
+            return true;
+        }
+        return false;
+    }
+
+    public function roles()
+    {
+
+        return $this->belongsToMany('App\Models\Role', 'role_user', 'user_id', 'role_id');
+    }
 }
