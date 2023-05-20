@@ -2,32 +2,108 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use App\Models\User;
+
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller
 {
-    public function show($id){
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
 
-        $store_id=$id;
+    public function store(Request $request)
+    {
 
-        $store= Store::findOrFail($store_id);
-        if($store){
+        $user_id = Auth::user()->id;
+
+        $user = User::findOrFail($user_id);
+        // $this->validate($request, [
+
+        //     'name'        => 'required|string|max:20',
+        //     'address'        => 'required|string|max:20',
+        //     'phone'        => 'required|string|max:20',
+        //     'mobile'       => 'required|string|max:20',
+        //     'email'       => 'required|email|max:100',
+        //     'url'        => 'required|string|max:100',
+        //     'tax_number'        => 'required|string|max:20',
+        //     'tax_percentage'        => 'required|string|max:20',
+        //     'profit_percentage'        => 'required|string|max:20',
+
+        // ]);
+
+        $store = new Store();
+        $store->name = $request->input('name');
+        $store->address = $request->input('address');
+        $store->phone = $request->input('phone');
+        $store->mobile = $request->input('mobile');
+        $store->email = $request->input('email');
+        $store->url = $request->input('url');
+        $store->tax_number = $request->input('tax_number');
+        $store->tax_percentage = $request->input('tax_percentage');
+        $store->profit_percentage = $request->input('profit_percentage');
+
+        if ($store->save()) {
+          
+            $user->stores()->attach($store);
+
+            $role = new Role();
+
+            $role->name = 'owner_role'; //owner has all privilledge to do.
+
+            $role->store_id = $store->id; //storing store if from recently saved store.
+
+            if ($role->save()) {
+
+                $user->roles()->attach($role);
+
+                $permission           = new Permission();
+                $permission->name     = 'owner_permission';
+                $permission->actions     = 'all';
+                $permission->store_id = $store->id;
+                if ($permission->save()) {
+
+                    $role->permissions()->attach($permission);
+
+                    return response()->json([
+                        'message' => 'Successfully created store with roles,permissions',
+                        'status' => 'success',
+                    ]);
+                }
+               
+            }
+          
+        } else {
+            //error while saving store data to database
             return response()->json([
-                'msg' => 'Store fetched successfully',
+                'message' => 'failed saving store data',
+                'status' => 'danger',
+            ]);
+        }
+    }
+    public function show($id)
+    {
+
+        $store_id = $id;
+
+        $store = Store::findOrFail($store_id);
+        if ($store) {
+            return response()->json([
+                'message' => 'Store fetched successfully',
                 'store' => $store,
                 'status' => 'success',
             ]);
-        }else{
+        } else {
             return response()->json([
-                'msg' => 'failed fetching store data',
+                'message' => 'failed fetching store data',
                 'store' => $store,
                 'status' => 'error',
             ]);
         }
-
-
-
-
     }
 }

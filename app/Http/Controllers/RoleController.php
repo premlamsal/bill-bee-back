@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Mockery\Undefined;
 
 class RoleController extends Controller
 {
@@ -107,10 +108,13 @@ class RoleController extends Controller
 
         if ($role->save()) {
 
+            if($request->input('permission_id_old')!="undefined")
+            {
             $permission_old = Permission::findOrFail($request->input('permission_id_old'));
 
             // Detach a single role from the user...
             $role->permissions()->detach($permission_old);
+            }
 
             $permission = Permission::findOrFail($request->input('permission_id'));
             //attach new role....
@@ -124,7 +128,7 @@ class RoleController extends Controller
 
             return response()->json([
                 'msg'    => 'Error Saving Data',
-                'status' => 'eroor',
+                'status' => 'danger',
             ]);
         }
     }
@@ -141,13 +145,14 @@ class RoleController extends Controller
         if ($role->delete()) {
 
             $permission_id = $role->permissions()->value('permission_id');
+            if($permission_id){
+                $permissions = Permission::findOrFail($permission_id);
 
-            $permissions = Permission::findOrFail($permission_id);
-
-            // print_r($permission_id);
-            // Detach a single role from the user...
-            $role->permissions()->detach($permissions);
-
+                // print_r($permission_id);
+                // Detach a single role from the user...
+                $role->permissions()->detach($permissions);
+            }
+         
             return response()->json([
 
                 'msg'    => 'successfully Deleted',
@@ -159,7 +164,7 @@ class RoleController extends Controller
 
                 'msg'    => 'Error while deleting data',
 
-                'status' => 'error',
+                'status' => 'danger',
             ]);
         }
     }
@@ -177,7 +182,7 @@ class RoleController extends Controller
         } else {
             return response()->json([
                 'msg'    => 'Error while retriving Permissions. No Data Supplied as key.',
-                'status' => 'error',
+                'status' => 'danger',
             ]);
         }
     }

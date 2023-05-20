@@ -29,33 +29,33 @@ class AuthServiceProvider extends ServiceProvider
         ]);
 
 
-        // Gate::define('hasPermission', function ($user, $action) {
+        Gate::define('hasPermission', function ($user, $action) {
 
-        //     $permissions = $user->roles()->first();
+            $permissions = $user->roles()->first();
 
-        //     $permissions = $permissions->permissions()->first()->name;
+            $permissions = $permissions->permissions()->first()->name;
 
-        //     $permissions = explode(',', $permissions); //seperate name string by ',' and push them to array
+            $permissions = explode(',', $permissions); //seperate name string by ',' and push them to array
 
-        //     if (in_array($action, $permissions) || in_array('all', $permissions)) {
+            if (in_array($action, $permissions) || in_array('all', $permissions)) {
 
-        //         return true;
-        //     } else {
-        //         return false;
-        //     }
+                return true;
+            } else {
+                return false;
+            }
 
-        // });
+        });
 
-        // Gate::define('hasStore', function ($user, $store) {
+        Gate::define('hasStore', function ($user, $store) {
 
-        //     $check = $user->stores()->where('store_id', $store);
+            $check = $user->stores()->where('store_id', $store);
 
-        //     if ($check->first()) {
+            if ($check->first()) {
 
-        //         return true;
-        //     } else {
-        //         return false;
-        //     }
-        // });
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 }

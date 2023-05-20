@@ -80,7 +80,7 @@ class UserController extends Controller
 
             return response()->json([
                 'msg'    => 'Error Saving Data',
-                'status' => 'eroor',
+                'status' => 'danger',
             ]);
 
         }
@@ -104,7 +104,7 @@ class UserController extends Controller
 
             'role_id'     => 'required|integer',
 
-            'password'    => 'required',
+            // 'password'    => 'required',
 
             // 'password'=>'required| min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/',
             //English uppercase characters (A – Z)
@@ -126,15 +126,18 @@ class UserController extends Controller
 
         $user->email = $request->input('email');
 
-        
-
-        $user->password = bcrypt($request->input('password'));
+        if($request->input('password')){
+            $user->password = bcrypt($request->input('password'));
+        }
 
         if ($user->save()) {
 
-            $role_old = Role::findOrFail($request->input('role_id_old'));
+            if($request->input('role_id_old')){
+                $role_old = Role::findOrFail($request->input('role_id_old'));
 
-            $user->roles()->detach($role_old);
+                $user->roles()->detach($role_old);
+            }
+          
 
             $role = Role::findOrFail($request->input('role_id'));
 
@@ -149,7 +152,7 @@ class UserController extends Controller
 
             return response()->json([
                 'msg'    => 'Error updating Data',
-                'status' => 'eroor',
+                'status' => 'danger',
             ]);
 
         }
@@ -171,7 +174,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-
+   
         // $this->authorize('hasPermission', 'all'); //all permission belongs to owner only
 
         $user = User::findOrFail($id); //finding passed user refrence
@@ -181,27 +184,29 @@ class UserController extends Controller
         $store_id_of_passed_user = $user->stores[0]->id;
 
         //checking logged in user belong to that passed user id store or not
+
         $this->authorize('hasStore', $store_id_of_passed_user);
 
         // $this->authorize('hasPermission','delete_user');
 
         if ($role_name_of_passed_user != 'owner') {
 
+
             if ($user->delete()) {
                 return response()->json([
-                    'msg'    => 'successfully Deleted',
+                    'msg'    => 'Successfully Deleted',
                     'status' => 'success',
                 ]);
             } else {
                 return response()->json([
                     'msg'    => 'Error while deleting data',
-                    'status' => 'error',
+                    'status' => 'danger',
                 ]);
             }
         } else {
             return response()->json([
                 'msg'    => 'You can\'t delete owner',
-                'status' => 'error',
+                'status' => 'danger',
             ]);
         }
 
@@ -222,7 +227,7 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'msg'    => 'Error while retriving Users. No Data Supplied as key.',
-                'status' => 'error',
+                'status' => 'danger',
             ]);
         }
     }

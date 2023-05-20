@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Notifications\RegistrationNotification;
 use App\Notifications\VerificationNotification;
@@ -30,10 +32,14 @@ class LoginController extends Controller
 
         $user = User::where('email', $email)->first();
 
+
         if (password_verify($password, $user->password)) {
             $user->last_login = Carbon::now();
             $user->save();
             return response(array("message" => "Login In Successful", "data" => [
+       
+                "store"=>$user->stores,
+
                 "user" => $user,
                 // Below the user key passed as the second parameter sets the role
                 // anyone with the auth token would have only user access rights

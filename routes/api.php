@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheckController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LoginController;
@@ -45,6 +46,9 @@ Route::post('/user/edit', [UserController::class, 'update']);
 
 Route::get('/user/{id}', [UserController::class, 'show']);
 
+//delete single user
+Route::delete('/user/{id}', [UserController::class, 'destroy']);
+
 
 //roles
 Route::get('/roles', [RoleController::class, 'index']);
@@ -55,6 +59,8 @@ Route::post('/role/edit', [RoleController::class, 'update']);
 
 Route::get('/role/{id}', [RoleController::class, 'show']);
 
+//delete single user
+Route::delete('/role/{id}', [RoleController::class, 'destroy']);
 
 //permissions
 Route::get('/permissions', [PermissionController::class, 'index']);
@@ -66,6 +72,8 @@ Route::post('/permission/edit', [PermissionController::class, 'update']);
 Route::get('/permission/{id}', [PermissionController::class, 'show']);
 
 
+//delete single user
+Route::delete('/permission/{id}', [PermissionController::class, 'destroy']);
 
 
 
@@ -179,3 +187,22 @@ Route::get('/units', [UnitController::class, 'index']);
 
 
 //end of unit
+
+
+//store
+Route::post('/create-store',[StoreController::class,'store']);
+
+
+
+//end of store
+
+
+
+
+//check user has store or not
+Route::get('store/check', [CheckController::class,'checkUserForStore']);
+
+
+//check user has permissions or not
+Route::get('permissions/check', [CheckController::class,'checkPermissions']);
+
