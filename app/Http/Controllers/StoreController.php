@@ -23,19 +23,19 @@ class StoreController extends Controller
         $user_id = Auth::user()->id;
 
         $user = User::findOrFail($user_id);
-        // $this->validate($request, [
+        $this->validate($request, [
 
-        //     'name'        => 'required|string|max:20',
-        //     'address'        => 'required|string|max:20',
-        //     'phone'        => 'required|string|max:20',
-        //     'mobile'       => 'required|string|max:20',
-        //     'email'       => 'required|email|max:100',
-        //     'url'        => 'required|string|max:100',
-        //     'tax_number'        => 'required|string|max:20',
-        //     'tax_percentage'        => 'required|string|max:20',
-        //     'profit_percentage'        => 'required|string|max:20',
+            'name'        => 'required|string|max:20',
+            'address'        => 'required|string|max:20',
+            'phone'        => 'required|string|max:20',
+            'mobile'       => 'required|string|max:20',
+            'email'       => 'required|email|max:100',
+            'url'        => 'required|string|max:100',
+            'tax_number'        => 'required|string|max:20',
+            'tax_percentage'        => 'required|string|max:20',
+            'profit_percentage'        => 'required|string|max:20',
 
-        // ]);
+        ]);
 
         $store = new Store();
         $store->name = $request->input('name');
@@ -49,7 +49,7 @@ class StoreController extends Controller
         $store->profit_percentage = $request->input('profit_percentage');
 
         if ($store->save()) {
-          
+
             $user->stores()->attach($store);
 
             $role = new Role();
@@ -70,18 +70,36 @@ class StoreController extends Controller
 
                     $role->permissions()->attach($permission);
 
+                    $user = User::findOrFail(Auth::user()->id);
+                    $user->default_store = $store->id;
+                    if ($user->save()) {
+                        //success saving user default store 
+                        return response()->json([
+                            'message' => 'Successfully created store with roles, permissions with default store',
+                            'status' => 'success',
+                        ]);
+                    } else {
+                        return response()->json([
+                            'message' => 'Failed creating store with default store',
+                            'status' => 'error',
+                        ]);
+                    }
+                } else {
                     return response()->json([
-                        'message' => 'Successfully created store with roles,permissions',
-                        'status' => 'success',
+                        'message' => 'Failed creating store with permissions ',
+                        'status' => 'error',
                     ]);
                 }
-               
+            } else {
+                return response()->json([
+                    'message' => 'Failed creating store with roles ',
+                    'status' => 'error',
+                ]);
             }
-          
         } else {
             //error while saving store data to database
             return response()->json([
-                'message' => 'failed saving store data',
+                'message' => 'failed creating store',
                 'status' => 'danger',
             ]);
         }

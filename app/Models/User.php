@@ -49,6 +49,7 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Models\Store', 'user_store', 'user_id', 'store_id');
     }
 
+  
     public function hasStore($store)
     {
 

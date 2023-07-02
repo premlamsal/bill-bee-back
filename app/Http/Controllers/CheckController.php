@@ -12,7 +12,6 @@ class CheckController extends Controller
     {
 
         $this->middleware('auth:api');
-
     }
 
     public function stores()
@@ -22,8 +21,9 @@ class CheckController extends Controller
 
         $stores = $user->stores;
 
-        return response()->json(['stores' => $stores, 'status' => 'success']);
+        $default_store = Auth::user()->default_store;
 
+        return response()->json(['default_store' => $default_store, 'stores' => $stores, 'status' => 'success']);
     }
     // public function checkUserForStore()
     // {
@@ -46,13 +46,14 @@ class CheckController extends Controller
     public function checkPermissions()
     {
 
+
         $permissions = Auth::user()->roles()->first();
 
-        if($permissions){
-            
-        $permissions = $permissions->permissions()->first()->actions;
+        if ($permissions) {
 
-        $permissions = explode(',', $permissions); //seperate name string by ',' and push them to array
+            $permissions = $permissions->permissions()->first()->actions;
+
+            $permissions = explode(',', $permissions); //seperate name string by ',' and push them to array
 
         }
 
@@ -65,7 +66,57 @@ class CheckController extends Controller
             'permissions' => $permissions,
             'status'      => 'success',
         ]);
-
     }
+    public function hasStore()
+    {
 
+        $stores = Auth::user()->stores()->first();
+
+        return response()->json([
+
+            'stores' => $stores,
+            'status'      => 'success',
+        ]);
+    }
+    public function saveUserDefaultStore(Request $request)
+    {
+        $this->validate($request, [
+            'selected_store' =>  'required|numeric',
+        ]);
+     
+        $input_selected_store = $request->input('selected_store');
+
+        if (Auth::user()->hasStore($input_selected_store)) {
+        
+            $user = User::findOrFail(Auth::user()->id);
+        
+            $user->default_store = $input_selected_store;
+        
+            if ($user->save()) {
+                //success message
+                return response()->json([
+                   
+                    'message' => 'Store Updated successfully',
+                   
+                    'status' => 'success',
+                ]);
+            } else {
+                //error saving default store to current user. Contact admin for more information.
+                return response()->json([
+                
+                    'message' => 'Error saving default store to current user. Contact admin for more information',
+                
+                    'status' => 'error',
+                ]);
+            }
+        } else {
+            //there is no store like that or don't have permission to access that 
+            return response()->json([
+               
+                'message' => 'There is no store like that or don\'t have permission to access that ',
+               
+                'status' => 'error',
+            ]);
+        }
+    }
 }

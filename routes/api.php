@@ -202,7 +202,19 @@ Route::post('/create-store',[StoreController::class,'store']);
 //check user has store or not
 Route::get('store/check', [CheckController::class,'checkUserForStore']);
 
+//get all store that are assigned to current user
+Route::get('user-stores', [CheckController::class,'stores']);
+
+//save one default store from all store of current user
+Route::post('save-store', [CheckController::class,'saveUserDefaultStore']);
+
+
 
 //check user has permissions or not
 Route::get('permissions/check', [CheckController::class,'checkPermissions']);
+
+
+
+//check user has stores or not
+Route::get('stores/check', [CheckController::class,'hasStore']);
 

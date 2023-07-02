@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('last_login')->nullable();
             $table->boolean('active')->default(false);
             $table->string('type')->nullable();
+            $table->string('default_store')->nullable();
             $table->string('activation_token');
             $table->rememberToken();
             $table->timestamps();
