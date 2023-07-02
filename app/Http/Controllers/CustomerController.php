@@ -22,9 +22,9 @@ class CustomerController extends Controller
     }
     public function index()
     {
-        $store_id= Auth::user()->stores[0]->id;
+        $store_id= Auth::user()->default_store;
         
-        return CustomerResource::collection(Customer::orderBy('updated_at', 'desc')->paginate(8));
+        return CustomerResource::collection(Customer::where('store_id',$store_id)->orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request)
     {
@@ -38,8 +38,8 @@ class CustomerController extends Controller
         ]);
 
 
-        //let store =1;
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
+
         $store = Store::findOrFail($store_id);
 
         $customer_id_count = $store->customer_id_count;
@@ -95,14 +95,16 @@ class CustomerController extends Controller
 
         ]);
 
+        $store_id = Auth::user()->default_store;
+
         $id = $request->input('id'); //get id from edit modal
-        $customer = Customer::where('id', $id)->first();
+        $customer = Customer::where('id', $id)->where('store_id',$store_id)->first();
         $customer->name = $request->input('name');
         $customer->address = $request->input('address');
         $customer->phone = $request->input('phone');
         $customer->details = $request->input('details');
         $customer->opening_balance = $request->input('opening_balance');
-        $customer->store_id = 1;
+     
         if ($customer->save()) {
             return response()->json([
                 'msg' => 'Customer updated successfully',
@@ -117,8 +119,9 @@ class CustomerController extends Controller
     }
     public function destroy($id)
     {
+        $store_id = Auth::user()->default_store;
 
-        $customer = Customer::where('id', $id)->first();
+        $customer = Customer::where('id', $id)->where('store_id',$store_id)->first();
         if ($customer->delete()) {
             return response()->json([
                 'msg' => 'Customer deleted successfully',
@@ -133,8 +136,9 @@ class CustomerController extends Controller
     }
     public function show($id)
     {
+        $store_id = Auth::user()->default_store;
 
-        $customer = Customer::where('id', $id)->first();
+        $customer = Customer::where('id', $id)->where('store_id',$store_id)->first();
         if ($customer) {
             return response()->json([
                 'msg' => 'Customer fetched successfully',
@@ -151,10 +155,11 @@ class CustomerController extends Controller
 
     public function searchCustomers(Request $request)
     {
+        $store_id=Auth::user()->default_store;
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
-            return CustomerResource::collection(Customer::where('name', 'like', '%' . $searchKey . '%')->get());
+            return CustomerResource::collection(Customer::where('store_id',$store_id)->where('name', 'like', '%' . $searchKey . '%')->get());
         } else {
             return response()->json([
                 'msg' => 'Error while retriving Customer. No Data Supplied as key.',

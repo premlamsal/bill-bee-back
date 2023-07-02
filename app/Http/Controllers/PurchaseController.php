@@ -7,6 +7,7 @@ use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseController extends Controller
 {
@@ -38,7 +39,7 @@ class PurchaseController extends Controller
 
         $purchase_status_save = false;
 
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
 
         $store = Store::findOrFail($store_id);
 
@@ -135,7 +136,7 @@ class PurchaseController extends Controller
         ]);
 
 
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
 
         $id = $request->id; //we will get purchase id here
 
@@ -195,7 +196,11 @@ class PurchaseController extends Controller
     }
     public function show($id)
     {
-        $purchase = Purchase::where('custom_purchase_id', $id)->with('purchaseDetail.product.unit')->with('supplier')->first();
+
+        $store_id = Auth::user()->default_store;
+        
+        $purchase = Purchase::where('store_id',$store_id)->where('custom_purchase_id', $id)->with('purchaseDetail.product.unit')->with('supplier')->first();
+        
         if ($purchase) {
             return response()->json([
                 'msg' => 'Purchases fetched successfully',

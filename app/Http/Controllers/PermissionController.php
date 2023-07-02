@@ -19,7 +19,7 @@ class PermissionController extends Controller
 
         // $this->authorize('hasPermission', 'view_permissions');
 
-        $store_id= Auth::user()->stores[0]->id;
+        $store_id= Auth::user()->default_store;
         
         $permission=Permission::where('actions', '!=', 'all')->where('store_id',$store_id)->paginate(8);
         
@@ -40,7 +40,7 @@ class PermissionController extends Controller
 
         // $this->authorize('hasPermission', 'add_permission');
 
-        $store_id= Auth::user()->stores[0]->id;
+        $store_id= Auth::user()->default_store;
 
         $this->validate($request, [
 
@@ -79,7 +79,7 @@ class PermissionController extends Controller
 
         // $this->authorize('hasPermission', 'show_permission');
 
-        $store_id= Auth::user()->stores[0]->id;
+        $store_id= Auth::user()->default_store;
 
         $permission = Permission::where('id', $id)->where('store_id', $store_id);
         $permission->name= $permission->value('name');
@@ -105,7 +105,7 @@ class PermissionController extends Controller
 
         // $this->authorize('hasPermission', 'edit_permission');
 
-        $store_id= Auth::user()->stores[0]->id;
+        $store_id= Auth::user()->default_store;
 
         $this->validate($request, [
 
@@ -155,7 +155,7 @@ class PermissionController extends Controller
 
         // $this->authorize('hasPermission', 'delete_permission');
 
-       $store_id= Auth::user()->stores[0]->id;
+       $store_id = Auth::user()->default_store;
 
         $permission = Permission::where('id', $id)->where('store_id', $store_id)->first();
 
@@ -181,8 +181,7 @@ class PermissionController extends Controller
     {
 
         // $this->authorize('hasPermission', 'search_permission');
-        $store_id= Auth::user()->stores[0]->id;
-
+        $store_id = Auth::user()->default_store;
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
             return PermissionResource::collection(Permission::where('store_id', $store_id)->where('short_name', 'like', '%' . $searchKey . '%')->where('store_id', $store_id)->paginate(8));

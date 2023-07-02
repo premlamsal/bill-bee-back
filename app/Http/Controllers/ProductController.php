@@ -6,6 +6,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -30,11 +31,9 @@ class ProductController extends Controller
         ]);
 
 
-        //let store =1;
-        $store_id = 1;
 
-        //let store =1;
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
+
         $store = Store::findOrFail($store_id);
 
         $product_id_count = $store->product_id_count;
@@ -110,10 +109,10 @@ class ProductController extends Controller
 
 
         //let store =1;
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
 
         $id = $request->input('id'); //get id from edit modal
-        $product = Product::where('id', $id)->first();
+        $product = Product::where('store_id',$store_id)->where('id', $id)->first();
         $product->name = $request->input('name');
         $product->product_cat_id = $request->input('product_cat_id');
         $product->unit_id = $request->input('unit_id');
@@ -159,8 +158,9 @@ class ProductController extends Controller
 
     public function show($id)
     {
+        $store_id = Auth::user()->default_store;
 
-        $product = Product::where('custom_product_id', $id)->with('category')->with('unit')->first();
+        $product = Product::where('store_id',$store_id)->where('custom_product_id', $id)->with('category')->with('unit')->first();
         if ($product) {
             return response()->json([
                 'msg' => 'Product fetched successfully',
@@ -179,10 +179,12 @@ class ProductController extends Controller
 
     public function searchProduct(Request $request)
     {
+        $store_id = Auth::user()->default_store;
+
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
 
-            return ProductResource::collection(Product::where('name', 'like', '%' . $searchKey . '%')->with('category')->with('unit')->get());
+            return ProductResource::collection(Product::where('store_id',$store_id)->where('name', 'like', '%' . $searchKey . '%')->with('category')->with('unit')->get());
         } else {
             return response()->json([
                 'msg' => 'Error while retriving Products. No Data Supplied as key.',

@@ -19,22 +19,19 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-
     }
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
 
-        $user_id= Auth::user()->id;
+        $user_id = Auth::user()->id;
 
-        return UserResource::collection(User::where('id','!=',$user_id)->with('roles')->orderBy('updated_at', 'desc')->paginate(8));
-
+        return UserResource::collection(User::where('id', '!=', $user_id)->with('roles')->orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request)
     {
 
-        $store_id = Auth::user()->stores[0]->id;
-
-        $store = Auth::user()->stores[0];
+        $store_id = Auth::user()->default_store;
 
         $this->validate($request, [
 
@@ -62,29 +59,28 @@ class UserController extends Controller
         $user->email    = $request->input('email');
         $user->password = bcrypt($request->input('password'));
         $user->activation_token = Str::random(60);
-        $user->last_login='Not Logged In Yet';
+        $user->last_login = 'Not Logged In Yet';
+        $user->default_store = $store_id;
+
         $role = Role::findOrFail($request->input('role_id'));
 
         if ($user->save()) {
 
             $user->roles()->attach($role);
 
-            $user->stores()->attach($store);
+            $user->stores()->attach($store_id);
 
             return response()->json([
                 'msg'    => 'Data Saved',
                 'status' => 'success',
             ]);
-
         } else {
 
             return response()->json([
                 'msg'    => 'Error Saving Data',
                 'status' => 'danger',
             ]);
-
         }
-
     }
 
     public function update(Request $request)
@@ -126,18 +122,18 @@ class UserController extends Controller
 
         $user->email = $request->input('email');
 
-        if($request->input('password')){
+        if ($request->input('password')) {
             $user->password = bcrypt($request->input('password'));
         }
 
         if ($user->save()) {
 
-            if($request->input('role_id_old')){
+            if ($request->input('role_id_old')) {
                 $role_old = Role::findOrFail($request->input('role_id_old'));
 
                 $user->roles()->detach($role_old);
             }
-          
+
 
             $role = Role::findOrFail($request->input('role_id'));
 
@@ -147,14 +143,12 @@ class UserController extends Controller
                 'msg'    => 'Data updated',
                 'status' => 'success',
             ]);
-
         } else {
 
             return response()->json([
                 'msg'    => 'Error updating Data',
                 'status' => 'danger',
             ]);
-
         }
     }
 
@@ -163,7 +157,9 @@ class UserController extends Controller
 
         // $this->authorize('hasPermission', 'all'); //all permission belongs to owner only
 
-        $user = User::where('id', $id)->with('roles')->first();
+        $store_id = Auth::user()->default_store;
+
+        $user = User::where('store_id',$store_id)->where('id', $id)->with('roles')->first();
 
         return response()->json([
             'msg'    => 'Successfuly fetched Data',
@@ -174,14 +170,20 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-   
+
         // $this->authorize('hasPermission', 'all'); //all permission belongs to owner only
+
+        $store_id = Auth::user()->default_store;
 
         $user = User::findOrFail($id); //finding passed user refrence
 
         $role_name_of_passed_user = $user->roles[0]->name;
 
-        $store_id_of_passed_user = $user->stores[0]->id;
+        // $store_id_of_passed_user = $user->stores[0]->id;
+
+        $store_id_of_passed_user = $store_id;
+
+
 
         //checking logged in user belong to that passed user id store or not
 
@@ -209,7 +211,6 @@ class UserController extends Controller
                 'status' => 'danger',
             ]);
         }
-
     }
 
     public function searchUsers(Request $request)
@@ -219,7 +220,8 @@ class UserController extends Controller
 
         $user = User::findOrFail(Auth::user()->id);
 
-        $store_id = $user->stores[0]->id;
+        $store_id = Auth::user()->default_store;
+
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
@@ -231,5 +233,4 @@ class UserController extends Controller
             ]);
         }
     }
-
 }

@@ -7,13 +7,15 @@ use App\Models\Invoice;
 use App\Models\InvoiceDetail;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
     public function index()
     {
+        $store_id = Auth::user()->default_store;
 
-        return InvoiceResource::collection(Invoice::with('invoiceDetail')->orderBy('updated_at', 'desc')->paginate(8));
+        return InvoiceResource::collection(Invoice::where('store_id',$store_id)->with('invoiceDetail')->orderBy('updated_at', 'desc')->paginate(8));
     }
 
     public function store(Request $request)
@@ -38,7 +40,7 @@ class InvoiceController extends Controller
 
         $invoice_status_save = false;
 
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
 
         $store = Store::findOrFail($store_id);
 
@@ -135,7 +137,7 @@ class InvoiceController extends Controller
         ]);
 
 
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
 
         $id = $request->id; //we will get invoice id here
 
@@ -195,7 +197,9 @@ class InvoiceController extends Controller
     }
     public function show($id)
     {
-        $invoice = Invoice::where('custom_invoice_id', $id)->with('invoiceDetail.product.unit')->with('customer')->first();
+        $store_id = Auth::user()->default_store;
+
+        $invoice = Invoice::where('store_id',$store_id)->where('custom_invoice_id', $id)->with('invoiceDetail.product.unit')->with('customer')->first();
         if ($invoice) {
             return response()->json([
                 'msg' => 'Invoices fetched successfully',

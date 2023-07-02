@@ -23,7 +23,7 @@ class RoleController extends Controller
     public function index()
     {
 
-        $store_id = Auth::user()->stores[0]->id;
+        $store_id = Auth::user()->default_store;
 
         //this will send roles without role type: owner
         return RoleResource::collection(Role::where('store_id', $store_id)->where('name', '!=', 'owner')->with('permissions')->paginate(8));
@@ -36,7 +36,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
 
-        $store_id = Auth::user()->stores[0]->id;
+        $store_id = Auth::user()->default_store;
 
 
         $this->validate($request, [
@@ -75,7 +75,7 @@ class RoleController extends Controller
 
         // $this->authorize('hasPermission', 'show_role');
 
-        $store_id = Auth::user()->stores[0]->id;
+        $store_id = Auth::user()->default_store;
 
 
         $role = Role::where('id', $id)->where('store_id', $store_id)->with('permissions')->first();
@@ -91,7 +91,7 @@ class RoleController extends Controller
     {
 
 
-        $store_id = Auth::user()->stores[0]->id;
+        $store_id = Auth::user()->default_store;
 
 
         $this->validate($request, [
@@ -137,7 +137,7 @@ class RoleController extends Controller
     {
 
 
-        $store_id = Auth::user()->stores[0]->id;
+        $store_id = Auth::user()->default_store;
 
 
         $role = Role::where('id', $id)->where('store_id', $store_id)->first();
@@ -173,7 +173,7 @@ class RoleController extends Controller
     {
 
 
-        $store_id = Auth::user()->stores[0]->id;
+        $store_id = Auth::user()->default_store;
 
 
         $searchKey = $request->input('searchQuery');

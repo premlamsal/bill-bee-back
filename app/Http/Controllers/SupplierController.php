@@ -6,6 +6,7 @@ use App\Http\Resources\SupplierResource;
 use App\Models\Store;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
@@ -24,7 +25,7 @@ class SupplierController extends Controller
 
 
         //let store =1;
-        $store_id = 1;
+        $store_id = Auth::user()->default_store;
         $store = Store::findOrFail($store_id);
         
         $supplier_id_count = $store->supplier_id_count;
@@ -83,13 +84,17 @@ class SupplierController extends Controller
         ]);
 
         $id = $request->input('id'); //get id from edit modal
-        $supplier = Supplier::where('id', $id)->first();
+        
+        $store_id = Auth::user()->default_store;
+
+
+        $supplier = Supplier::where('store_id',$store_id)->where('id', $id)->first();
+
         $supplier->name = $request->input('name');
         $supplier->address = $request->input('address');
         $supplier->phone = $request->input('phone');
         $supplier->details = $request->input('details');
         $supplier->opening_balance = $request->input('opening_balance');
-        $supplier->store_id = 1;
         if($supplier->save()){
             return response()->json([
                 'msg' => 'Supplier updated successfully',
@@ -104,7 +109,9 @@ class SupplierController extends Controller
     }
     public function destroy($id){
 
-        $supplier = Supplier::where('id', $id)->first();
+        $store_id = Auth::user()->default_store;
+
+        $supplier = Supplier::where('store_id',$store_id)->where('id', $id)->first();
         if ($supplier->delete()) {
             return response()->json([
                 'msg' => 'Supplier deleted successfully',
@@ -119,7 +126,9 @@ class SupplierController extends Controller
     }
     public function show($id){
 
-        $supplier = Supplier::where('id', $id)->first();
+        $store_id = Auth::user()->default_store;
+
+        $supplier = Supplier::where('store_id',$store_id)->where('id', $id)->first();
         if ($supplier) {
             return response()->json([
                 'msg'=>'Supplier fetched successfully',
@@ -136,10 +145,11 @@ class SupplierController extends Controller
 
     public function searchSuppliers(Request $request)
     {
+        $store_id = Auth::user()->default_store;
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
-            return SupplierResource::collection(Supplier::where('name', 'like', '%' . $searchKey . '%')->get());
+            return SupplierResource::where('store_id',$store_id)->collection(Supplier::where('name', 'like', '%' . $searchKey . '%')->get());
         } else {
             return response()->json([
                 'msg' => 'Error while retriving Supplier. No Data Supplied as key.',
