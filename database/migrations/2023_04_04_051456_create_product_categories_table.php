@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('custom_category_id');
+            $table->string('name');
+            $table->string('description');
+            $table->unsignedBigInteger('store_id');
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
+            
             $table->timestamps();
         });
     }

@@ -218,3 +218,17 @@ Route::get('permissions/check', [CheckController::class,'checkPermissions']);
 //check user has stores or not
 Route::get('stores/check', [CheckController::class,'hasStore']);
 
+
+
+
+//category
+Route::get('/categories', [ProductCategoryController::class, 'index']);
+
+Route::post('/category/add', [ProductCategoryController::class, 'store']);
+
+Route::post('/category/edit', [ProductCategoryController::class, 'update']);
+
+Route::get('/category/{id}', [ProductCategoryController::class, 'show']);
+
+Route::post('/categories/search', [ProductCategoryController::class, 'searchCategory']);
+//end of category

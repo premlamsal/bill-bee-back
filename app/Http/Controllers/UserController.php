@@ -157,9 +157,8 @@ class UserController extends Controller
 
         // $this->authorize('hasPermission', 'all'); //all permission belongs to owner only
 
-        $store_id = Auth::user()->default_store;
 
-        $user = User::where('store_id',$store_id)->where('id', $id)->with('roles')->first();
+        $user = User::where('id', $id)->with('roles')->first();
 
         return response()->json([
             'msg'    => 'Successfuly fetched Data',

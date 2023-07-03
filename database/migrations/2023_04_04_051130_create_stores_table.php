@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('tax_percentage')->nullable();
             $table->decimal('profit_percentage');
             $table->string('product_id_count')->default('PRO-0');
+            $table->string('category_id_count')->default('CAT-0');
             $table->string('invoice_id_count')->default('INV-0');
             $table->string('purchase_id_count')->default('PUR-0');
             $table->string('customer_id_count')->default('CUS-0');

@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware('auth:api');
+
+    }
     public function index(){
         return SupplierResource::collection(Supplier::orderBy('updated_at', 'desc')->paginate(8));
     }
