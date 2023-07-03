@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware('auth:api');
+
+        // Auth::user()->name,
+
+    }
     public function index()
     {
         return ProductResource::collection(Product::orderBy('updated_at', 'desc')->with('unit')->with('category')->paginate(8));

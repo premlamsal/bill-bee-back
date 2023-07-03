@@ -232,3 +232,17 @@ Route::get('/category/{id}', [ProductCategoryController::class, 'show']);
 
 Route::post('/categories/search', [ProductCategoryController::class, 'searchCategory']);
 //end of category
+
+
+
+//unit
+Route::get('/units', [UnitController::class, 'index']);
+
+Route::post('/unit/add', [UnitController::class, 'store']);
+
+Route::post('/unit/edit', [UnitController::class, 'update']);
+
+Route::get('/unit/{id}', [UnitController::class, 'show']);
+
+Route::post('/units/search', [UnitController::class, 'searchUnits']);
+//end of unit

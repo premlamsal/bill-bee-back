@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware('auth:api');
+
+        // Auth::user()->name,
+
+    }
     public function index()
     {
         $store_id = Auth::user()->default_store;
