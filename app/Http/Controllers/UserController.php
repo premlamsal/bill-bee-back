@@ -25,8 +25,10 @@ class UserController extends Controller
     {
 
         $user_id = Auth::user()->id;
+        $store_id = Auth::user()->default_store;
 
-        return UserResource::collection(User::where('id', '!=', $user_id)->with('roles')->orderBy('updated_at', 'desc')->paginate(8));
+
+        return UserResource::collection(User::where('store_id',$store_id)->where('id', '!=', $user_id)->with('roles')->orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request)
     {

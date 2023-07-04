@@ -26,7 +26,7 @@ class RoleController extends Controller
         $store_id = Auth::user()->default_store;
 
         //this will send roles without role type: owner
-        return RoleResource::collection(Role::where('store_id', $store_id)->where('name', '!=', 'owner')->with('permissions')->paginate(8));
+        return RoleResource::collection(Role::where('store_id', $store_id)->where('name', '!=', 'owner_role')->with('permissions')->paginate(8));
 
         //this will send all roles including role type:owner
         // return RoleResource::collection(Role::where('store_id', $store_id)->with('permissions')->paginate(8));

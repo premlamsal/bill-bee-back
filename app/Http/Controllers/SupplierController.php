@@ -17,7 +17,8 @@ class SupplierController extends Controller
 
     }
     public function index(){
-        return SupplierResource::collection(Supplier::orderBy('updated_at', 'desc')->paginate(8));
+        $store_id = Auth::user()->default_store;
+        return SupplierResource::collection(Supplier::where('store_id',$store_id)->orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request){
         $this->validate($request, [
