@@ -21,8 +21,9 @@ class PurchaseController extends Controller
     }
     public function index()
     {
+        $store_id = Auth::user()->default_store;
 
-        return PurchaseResource::collection(Purchase::with('purchaseDetail')->orderBy('updated_at', 'desc')->paginate(8));
+        return PurchaseResource::collection(Purchase::where('store_id',$store_id)->with('purchaseDetail')->orderBy('updated_at', 'desc')->paginate(8));
     }
 
     public function store(Request $request)
