@@ -23,6 +23,7 @@ class StoreController extends Controller
         $user_id = Auth::user()->id;
 
         $user = User::findOrFail($user_id);
+
         $this->validate($request, [
 
             'name'        => 'required|string|max:20',
@@ -110,6 +111,27 @@ class StoreController extends Controller
         $store_id = $id;
 
         $store = Store::findOrFail($store_id);
+        if ($store) {
+            return response()->json([
+                'message' => 'Store fetched successfully',
+                'store' => $store,
+                'status' => 'success',
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'failed fetching store data',
+                'store' => $store,
+                'status' => 'error',
+            ]);
+        }
+    }
+    public function getUserStore()
+    {
+
+         $user_default_store_id = Auth::user()->default_store;
+
+      
+        $store = Store::findOrFail($user_default_store_id);
         if ($store) {
             return response()->json([
                 'message' => 'Store fetched successfully',

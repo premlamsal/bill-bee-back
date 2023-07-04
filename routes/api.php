@@ -158,6 +158,9 @@ Route::get('/invoice/{id}', [InvoiceController::class, 'show']);
 Route::get('/store/{id}', [StoreController::class, 'show']);
 
 
+Route::get('/user-store', [StoreController::class, 'getUserStore']);
+
+
 //end of store
 
 //purchase

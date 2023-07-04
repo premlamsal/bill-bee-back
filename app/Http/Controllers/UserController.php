@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\Role;
+use App\Models\Store;
 use App\Models\User;
 use App\Notifications\RegistrationNotification;
 use App\Notifications\VerificationNotification;
@@ -27,8 +28,12 @@ class UserController extends Controller
         $user_id = Auth::user()->id;
         $store_id = Auth::user()->default_store;
 
+        return UserResource::collection(Store::findOrFail($store_id)->users()->with('roles')->whereHas('roles',function($q){
 
-        return UserResource::collection(User::where('store_id',$store_id)->where('id', '!=', $user_id)->with('roles')->orderBy('updated_at', 'desc')->paginate(8));
+            $q->where('roles.name','!=','owner_role');
+
+        })->orderBy('updated_at', 'desc')->paginate(8));
+        // return UserResource::collection(User::where('store_id',$store_id)->where('id', '!=', $user_id)->with('roles')->orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request)
     {

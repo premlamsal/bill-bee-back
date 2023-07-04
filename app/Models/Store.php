@@ -9,7 +9,6 @@ class Store extends Model
 {
     public function users()
     {
-
         return $this->belongsToMany('App\Models\User', 'user_store', 'store_id', 'user_id');
     }
 }
