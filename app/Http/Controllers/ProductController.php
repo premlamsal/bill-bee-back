@@ -20,7 +20,9 @@ class ProductController extends Controller
     }
     public function index()
     {
-        return ProductResource::collection(Product::orderBy('updated_at', 'desc')->with('unit')->with('category')->paginate(8));
+        $store_id = Auth::user()->default_store;
+
+        return ProductResource::collection(Product::where('store_id',$store_id)->orderBy('updated_at', 'desc')->with('unit')->with('category')->paginate(8));
     }
 
     public function store(Request $request)
