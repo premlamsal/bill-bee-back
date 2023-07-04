@@ -127,10 +127,8 @@ class StoreController extends Controller
     }
     public function getUserStore()
     {
-
-         $user_default_store_id = Auth::user()->default_store;
-
-      
+        $user_default_store_id = Auth::user()->default_store;
+        
         $store = Store::findOrFail($user_default_store_id);
         if ($store) {
             return response()->json([
