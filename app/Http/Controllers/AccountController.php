@@ -212,6 +212,39 @@ class AccountController extends Controller
         }
     }
 
+    public function showByCustomAccountID($custom_account_id)
+    {
+
+        // $this->authorize('hasPermission', 'show_account');
+
+        $user = User::findOrFail(Auth::user()->id);
+
+        $store_id = Auth::user()->default_store;
+
+        $account = Account::where('store_id', $store_id)->where('custom_account_id', $custom_account_id)->first();
+
+        // $invoice_amount=Invoice::where('store_id',$store_id)->where('account_id',$id)->sum('grand_total');
+        
+        // $paid_amount=AccountPayment::where('store_id',$store_id)->where('account_id',$id)->sum('amount');
+        
+        // $balance_due= $invoice_amount - $paid_amount + ( $account->opening_balance) ;
+
+        if ($account->save()) {
+            return response()->json([
+                'account' => $account,
+                // 'invoice_amount'=>$invoice_amount,
+                // 'paid_amount'=>$paid_amount,
+                // 'balance_due'=>$balance_due,
+                'status' => 'success',
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Error while retriving Account',
+                'status' => 'error',
+            ]);
+        }
+    }
+
     public function searchAccounts(Request $request)
     {
 
@@ -241,8 +274,9 @@ class AccountController extends Controller
 
         $store_id = Auth::user()->default_store;
 
+        $account_id_db= Account::where('custom_account_id',$account_id)->where('store_id',$store_id)->value('id');
 
-        $Transaction=Transaction::where('account_id',$account_id)->where('store_id',$store_id)->get();
+        $Transaction=Transaction::where('account_id',$account_id_db)->where('store_id',$store_id)->get();
        
         $transactions=array();
        

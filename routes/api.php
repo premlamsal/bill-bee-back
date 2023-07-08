@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CheckController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerTransactionController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PermissionController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplierTransactionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
@@ -117,24 +119,23 @@ Route::get('/custom-customer/{id}', [CustomerController::class, 'showByCustomCus
 Route::post('/customers/search', [CustomerController::class, 'searchCustomers']);
 //end of customer
 
-
 //Get Customer Transactions
-Route::get('customer/transactions/{id}', [CustomerController::class, 'index']);
+Route::get('customer/transactions/{id}', [CustomerTransactionController::class,'index']);
 
 //Create new Customer payent
-Route::post('customer/add-payment', [CustomerController::class, 'store']);
+Route::post('customer/add-payment', [CustomerPaymentController::class,'store']);
 
 //Create new Customer payent
-Route::get('customer/payments/{customer_id}', [CustomerController::class, 'getPayments']);
+Route::get('customer/payments/{customer_id}', [CustomerController::class,'getPayments']);
 
 //get Customer payment 
-Route::get('customer/payment/{payment_id}', [CustomerController::class, 'show']);
+Route::get('customer/payment/{payment_id}', [CustomerPaymentController::class,'show']);
 
 //Delete customer payment
-Route::delete('customer/delete-payment/{payment_id}', [CustomerController::class, 'destroy']);
+Route::delete('customer/delete-payment/{payment_id}', [CustomerPaymentController::class,'destroy']);
 
 //update customer payment
-Route::post('customer/update-payment/', [CustomerController::class, 'update']);
+Route::post('customer/update-payment/', [CustomerPaymentController::class,'update']);
 
 
 //supplier
@@ -153,22 +154,22 @@ Route::post('/suppliers/search', [SupplierController::class, 'searchSuppliers'])
 
 
 //Get Supplier Transactions
-Route::get('supplier/transactions/{id}', [SupplierController::class, 'index']);
+Route::get('supplier/transactions/{id}', [SupplierTransactionController::class,'index']);
 
 //Create new Supplier payent
-Route::post('supplier/add-payment', [SupplierController::class, 'store']);
+Route::post('supplier/add-payment', [SupplierPaymentController::class,'store']);
 
 //Create new Supplier payent
-Route::get('supplier/payments/{supplier_id}',[SupplierController::class, 'getPayments']);
+Route::get('supplier/payments/{supplier_id}', [SupplierController::class,'getPayments']);
 
 //get Supplier payment 
-Route::get('supplier/payment/{payment_id}', [SupplierController::class, 'show']);
+Route::get('supplier/payment/{payment_id}', [SupplierPaymentController::class,'show']);
 
 //Delete supplier payment
-Route::delete('supplier/delete-payment/{payment_id}', [SupplierController::class, 'destroy']);
+Route::delete('supplier/delete-payment/{payment_id}', [SupplierPaymentController::class,'destroy']);
 
 //Delete supplier payment
-Route::post('supplier/update-payment/', [SupplierController::class, 'update']);
+Route::post('supplier/update-payment/', [SupplierPaymentController::class,'update']);
 
 
 
@@ -305,6 +306,8 @@ Route::post('account/add',[AccountController::class,'store']);
 
 //List single account
 Route::get('account/{id}',[AccountController::class,'show']);
+
+Route::get('custom-account/{id}',[AccountController::class,'showByCustomAccountID']);
 
 //Update account
 Route::post('account/edit', [AccountController::class,'update']);
