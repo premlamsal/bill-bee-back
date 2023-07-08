@@ -86,19 +86,19 @@ class ProductController extends Controller
             if ($store->save()) {
 
                 return response()->json([
-                    'msg' => 'Product added successfully',
+                    'message' => 'Product added successfully',
                     'status' => 'success',
                 ]);
             } else {
 
                 return response()->json([
-                    'msg' => 'Failed to update data to store ',
+                    'message' => 'Failed to update data to store ',
                     'status' => 'error',
                 ]);
             }
         } else {
             return response()->json([
-                'msg' => 'Product fail to add ',
+                'message' => 'Product fail to add ',
                 'status' => 'error',
             ]);
         }
@@ -146,19 +146,19 @@ class ProductController extends Controller
                 $product->image = $imageName;
             } else {
                 return response()->json([
-                    'msg' => 'Opps! My Back got cracked while working in Database',
+                    'message' => 'Opps! My Back got cracked while working in Database',
                     'status' => 'error',
                 ]);
             }
         }
         if ($product->save()) {
             return response()->json([
-                'msg' => 'Product updated successfully',
+                'message' => 'Product updated successfully',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Product fail to update ',
+                'message' => 'Product fail to update ',
                 'status' => 'error',
             ]);
         }
@@ -173,13 +173,13 @@ class ProductController extends Controller
         $product = Product::where('store_id',$store_id)->where('custom_product_id', $id)->with('category')->with('unit')->first();
         if ($product) {
             return response()->json([
-                'msg' => 'Product fetched successfully',
+                'message' => 'Product fetched successfully',
                 'product' => $product,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Product',
+                'message' => 'Error while retriving Product',
                 'status' => 'error',
             ]);
         }
@@ -197,7 +197,7 @@ class ProductController extends Controller
             return ProductResource::collection(Product::where('store_id',$store_id)->where('name', 'like', '%' . $searchKey . '%')->with('category')->with('unit')->get());
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Products. No Data Supplied as key.',
+                'message' => 'Error while retriving Products. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }

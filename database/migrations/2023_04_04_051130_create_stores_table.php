@@ -30,10 +30,14 @@ return new class extends Migration
             $table->string('purchase_id_count')->default('PUR-0');
             $table->string('customer_id_count')->default('CUS-0');
             $table->string('supplier_id_count')->default('SUP-0');
+            $table->string('account_id_count')->default('ACC-0');
+            $table->string('transaction_id_count')->default('TRN-0');
+
             $table->string('unit_id_count')->default('UNI-0');
             $table->string('tax_id_count')->default('TAX-0');
             $table->string('return_invoice_id_count')->default('RINV-0');
             $table->string('return_purchase_id_count')->default('RPUR-0');
+            
             $table->string('store_logo')->nullable();
             $table->timestamps();
         });
