@@ -79,7 +79,7 @@ class TransactionController extends Controller
             if ($account->save()) {
                 //success code
                 return response()->json([
-                    'msg' => 'Transaction successfully added ',
+                    'message' => 'Transaction successfully added ',
                     'status' => 'success',
                 ]);
             }
@@ -87,7 +87,7 @@ class TransactionController extends Controller
         } else {
             //fail code
             return response()->json([
-                'msg' => 'Erros while saving transaction ',
+                'message' => 'Erros while saving transaction ',
                 'status' => 'error',
             ]);
         }
@@ -153,7 +153,7 @@ class TransactionController extends Controller
                 if ($account->save()) {
                     //success code
                     return response()->json([
-                        'msg' => 'Transaction successfully updated ',
+                        'message' => 'Transaction successfully updated ',
                         'status' => 'success',
                     ]);
                 }
@@ -161,7 +161,7 @@ class TransactionController extends Controller
         } else {
             //fail code
             return response()->json([
-                'msg' => 'Erros while saving transaction ',
+                'message' => 'Erros while saving transaction ',
                 'status' => 'error',
             ]);
         }
@@ -197,18 +197,18 @@ class TransactionController extends Controller
             }
             if ($account->save()) {
                 return response()->json([
-                    'msg' => 'successfully Deleted',
+                    'message' => 'successfully Deleted',
                     'status' => 'success',
                 ]);
             } else {
                 return response()->json([
-                    'msg' => 'Error while deleting customer transaction',
+                    'message' => 'Error while deleting customer transaction',
                     'status' => 'error',
                 ]);
             }
         } else {
             return response()->json([
-                'msg' => 'Error while deleting data',
+                'message' => 'Error while deleting data',
                 'status' => 'error',
             ]);
         }

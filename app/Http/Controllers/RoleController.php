@@ -58,13 +58,13 @@ class RoleController extends Controller
             $role->permissions()->attach($permission);
 
             return response()->json([
-                'msg'    => 'Data Saved',
+                'message'    => 'Data Saved',
                 'status' => 'success',
             ]);
         } else {
 
             return response()->json([
-                'msg'    => 'Error Saving Data',
+                'message'    => 'Error Saving Data',
                 'status' => 'danger',
             ]);
         }
@@ -82,7 +82,7 @@ class RoleController extends Controller
 
         return response()->json([
             'role'   => $role,
-            'msg'    => 'Successfuly fetched Data',
+            'message'    => 'Successfuly fetched Data',
             'status' => 'success',
         ]);
     }
@@ -121,13 +121,13 @@ class RoleController extends Controller
             $role->permissions()->attach($permission);
 
             return response()->json([
-                'msg'    => 'Data updated success',
+                'message'    => 'Data updated success',
                 'status' => 'success',
             ]);
         } else {
 
             return response()->json([
-                'msg'    => 'Error Saving Data',
+                'message'    => 'Error Saving Data',
                 'status' => 'danger',
             ]);
         }
@@ -155,14 +155,14 @@ class RoleController extends Controller
          
             return response()->json([
 
-                'msg'    => 'successfully Deleted',
+                'message'    => 'successfully Deleted',
 
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
 
-                'msg'    => 'Error while deleting data',
+                'message'    => 'Error while deleting data',
 
                 'status' => 'danger',
             ]);
@@ -181,7 +181,7 @@ class RoleController extends Controller
             return PermissionResource::collection(Permission::where('store_id', $store_id)->where('short_name', 'like', '%' . $searchKey . '%')->where('store_id', $store_id)->paginate(8));
         } else {
             return response()->json([
-                'msg'    => 'Error while retriving Permissions. No Data Supplied as key.',
+                'message'    => 'Error while retriving Permissions. No Data Supplied as key.',
                 'status' => 'danger',
             ]);
         }

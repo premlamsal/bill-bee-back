@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
+use App\Models\CustomerPayment;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -22,9 +23,9 @@ class CustomerController extends Controller
     }
     public function index()
     {
-        $store_id= Auth::user()->default_store;
-        
-        return CustomerResource::collection(Customer::where('store_id',$store_id)->orderBy('updated_at', 'desc')->paginate(8));
+        $store_id = Auth::user()->default_store;
+
+        return CustomerResource::collection(Customer::where('store_id', $store_id)->orderBy('updated_at', 'desc')->paginate(8));
     }
     public function store(Request $request)
     {
@@ -67,18 +68,18 @@ class CustomerController extends Controller
             if ($store->save()) {
 
                 return response()->json([
-                    'msg' => 'Customer added successfully',
+                    'message' => 'Customer added successfully',
                     'status' => 'success',
                 ]);
             } else {
                 return response()->json([
-                    'msg' => 'Failed to update data to store ',
+                    'message' => 'Failed to update data to store ',
                     'status' => 'error',
                 ]);
             }
         } else {
             return response()->json([
-                'msg' => 'Customer fail to add ',
+                'message' => 'Customer fail to add ',
                 'status' => 'error',
             ]);
         }
@@ -98,38 +99,39 @@ class CustomerController extends Controller
         $store_id = Auth::user()->default_store;
 
         $id = $request->input('id'); //get id from edit modal
-        $customer = Customer::where('id', $id)->where('store_id',$store_id)->first();
+        $customer = Customer::where('id', $id)->where('store_id', $store_id)->first();
         $customer->name = $request->input('name');
         $customer->address = $request->input('address');
         $customer->phone = $request->input('phone');
         $customer->details = $request->input('details');
         $customer->opening_balance = $request->input('opening_balance');
-     
+
         if ($customer->save()) {
             return response()->json([
-                'msg' => 'Customer updated successfully',
+                'message' => 'Customer updated successfully',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Customer fail to update ',
+                'message' => 'Customer fail to update ',
                 'status' => 'error',
             ]);
         }
     }
+
     public function destroy($id)
     {
         $store_id = Auth::user()->default_store;
 
-        $customer = Customer::where('id', $id)->where('store_id',$store_id)->first();
+        $customer = Customer::where('id', $id)->where('store_id', $store_id)->first();
         if ($customer->delete()) {
             return response()->json([
-                'msg' => 'Customer deleted successfully',
+                'message' => 'Customer deleted successfully',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Customer deletion failed',
+                'message' => 'Customer deletion failed',
                 'status' => 'error',
             ]);
         }
@@ -138,31 +140,60 @@ class CustomerController extends Controller
     {
         $store_id = Auth::user()->default_store;
 
-        $customer = Customer::where('id', $id)->where('store_id',$store_id)->first();
+        $customer = Customer::where('id', $id)->where('store_id', $store_id)->first();
+
         if ($customer) {
             return response()->json([
-                'msg' => 'Customer fetched successfully',
+                'message' => 'Customer fetched successfully',
                 'customer' => $customer,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Customer',
+                'message' => 'Error while retriving Customer',
                 'status' => 'error',
             ]);
         }
     }
+    public function showByCustomCustomerID($custom_customer_id)
+    {
+        $store_id = Auth::user()->default_store;
 
+        $customer = Customer::where('custom_customer_id', $custom_customer_id)->where('store_id', $store_id)->first();
+        
+        if ($customer) {
+            return response()->json([
+                'message' => 'Customer fetched successfully',
+                'customer' => $customer,
+                'status' => 'success',
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Error while retriving Customer',
+                'status' => 'error',
+            ]);
+        }
+    }
+    public function getPayments($customer_id)
+    {
+
+
+        $store_id = Auth::user()->default_store;
+
+        $CustomerPayments = CustomerPayment::where('store_id', $store_id)->where('customer_id', $customer_id)->get();
+
+        return response()->json(['data' => $CustomerPayments, 'status' => 'success']);
+    }
     public function searchCustomers(Request $request)
     {
-        $store_id=Auth::user()->default_store;
+        $store_id = Auth::user()->default_store;
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
-            return CustomerResource::collection(Customer::where('store_id',$store_id)->where('name', 'like', '%' . $searchKey . '%')->get());
+            return CustomerResource::collection(Customer::where('store_id', $store_id)->where('name', 'like', '%' . $searchKey . '%')->get());
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Customer. No Data Supplied as key.',
+                'message' => 'Error while retriving Customer. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }

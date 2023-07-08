@@ -117,11 +117,11 @@ class InvoiceController extends Controller
             $invoice_status_save = true;
         } else {
 
-            $jsonResponse = ['msg' => 'Failed updating the Data to the store.', 'status' => 'error'];
+            $jsonResponse = ['message' => 'Failed updating the Data to the store.', 'status' => 'error'];
         }
         if ($invoice_status_save) {
 
-            $jsonResponse = ['msg' => 'Successfully created invoice & update store data ', 'status' => 'success'];
+            $jsonResponse = ['message' => 'Successfully created invoice & update store data ', 'status' => 'success'];
         }
         return response()->json($jsonResponse);
     }
@@ -192,13 +192,13 @@ class InvoiceController extends Controller
 
         if ($invoice) {
             return response()->json([
-                'msg' => 'Invoices updated successfully',
+                'message' => 'Invoices updated successfully',
                 'invoice' => $invoice,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while updating Invoice',
+                'message' => 'Error while updating Invoice',
                 'status' => 'danger',
             ], 500);
         }
@@ -210,13 +210,13 @@ class InvoiceController extends Controller
         $invoice = Invoice::where('store_id',$store_id)->where('custom_invoice_id', $id)->with('invoiceDetail.product.unit')->with('customer')->first();
         if ($invoice) {
             return response()->json([
-                'msg' => 'Invoices fetched successfully',
+                'message' => 'Invoices fetched successfully',
                 'invoice' => $invoice,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Invoice',
+                'message' => 'Error while retriving Invoice',
                 'status' => 'danger',
             ], 500);
         }

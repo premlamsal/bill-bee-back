@@ -60,18 +60,18 @@ class UnitController extends Controller
             if ($store->save()) {
 
                 return response()->json([
-                    'msg' => 'Unit added successfully',
+                    'message' => 'Unit added successfully',
                     'status' => 'success',
                 ]);
             } else {
                 return response()->json([
-                    'msg' => 'Failed to update data to store ',
+                    'message' => 'Failed to update data to store ',
                     'status' => 'error',
                 ]);
             }
         } else {
             return response()->json([
-                'msg' => 'Unit fail to add ',
+                'message' => 'Unit fail to add ',
                 'status' => 'error',
             ]);
         }
@@ -93,12 +93,12 @@ class UnitController extends Controller
         $unit->long_name = $request->input('long_name');
         if ($unit->save()) {
             return response()->json([
-                'msg' => 'Unit updated successfully',
+                'message' => 'Unit updated successfully',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Unit fail to update ',
+                'message' => 'Unit fail to update ',
                 'status' => 'error',
             ]);
         }
@@ -110,12 +110,12 @@ class UnitController extends Controller
         $unit = Unit::where('id', $id)->where('store_id',$store_id)->first();
         if ($unit->delete()) {
             return response()->json([
-                'msg' => 'Unit deleted successfully',
+                'message' => 'Unit deleted successfully',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Unit deletion failed',
+                'message' => 'Unit deletion failed',
                 'status' => 'error',
             ]);
         }
@@ -127,13 +127,13 @@ class UnitController extends Controller
         $unit = Unit::where('id', $id)->where('store_id',$store_id)->first();
         if ($unit) {
             return response()->json([
-                'msg' => 'Unit fetched successfully',
+                'message' => 'Unit fetched successfully',
                 'unit' => $unit,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Unit',
+                'message' => 'Error while retriving Unit',
                 'status' => 'error',
             ]);
         }
@@ -148,7 +148,7 @@ class UnitController extends Controller
             return UnitResource::collection(Unit::where('store_id',$store_id)->where('name', 'like', '%' . $searchKey . '%')->get());
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Unit. No Data Supplied as key.',
+                'message' => 'Error while retriving Unit. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }

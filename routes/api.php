@@ -112,6 +112,8 @@ Route::post('/customer/edit', [CustomerController::class, 'update']);
 
 Route::get('/customer/{id}', [CustomerController::class, 'show']);
 
+Route::get('/custom-customer/{id}', [CustomerController::class, 'showByCustomCustomerID']);
+
 Route::post('/customers/search', [CustomerController::class, 'searchCustomers']);
 //end of customer
 

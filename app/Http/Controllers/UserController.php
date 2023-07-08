@@ -78,13 +78,13 @@ class UserController extends Controller
             $user->stores()->attach($store_id);
 
             return response()->json([
-                'msg'    => 'Data Saved',
+                'message'    => 'Data Saved',
                 'status' => 'success',
             ]);
         } else {
 
             return response()->json([
-                'msg'    => 'Error Saving Data',
+                'message'    => 'Error Saving Data',
                 'status' => 'danger',
             ]);
         }
@@ -147,13 +147,13 @@ class UserController extends Controller
             $user->roles()->attach($role);
 
             return response()->json([
-                'msg'    => 'Data updated',
+                'message'    => 'Data updated',
                 'status' => 'success',
             ]);
         } else {
 
             return response()->json([
-                'msg'    => 'Error updating Data',
+                'message'    => 'Error updating Data',
                 'status' => 'danger',
             ]);
         }
@@ -168,7 +168,7 @@ class UserController extends Controller
         $user = User::where('id', $id)->with('roles')->first();
 
         return response()->json([
-            'msg'    => 'Successfuly fetched Data',
+            'message'    => 'Successfuly fetched Data',
             'user'   => $user,
             'status' => 'success',
         ]);
@@ -202,18 +202,18 @@ class UserController extends Controller
 
             if ($user->delete()) {
                 return response()->json([
-                    'msg'    => 'Successfully Deleted',
+                    'message'    => 'Successfully Deleted',
                     'status' => 'success',
                 ]);
             } else {
                 return response()->json([
-                    'msg'    => 'Error while deleting data',
+                    'message'    => 'Error while deleting data',
                     'status' => 'danger',
                 ]);
             }
         } else {
             return response()->json([
-                'msg'    => 'You can\'t delete owner',
+                'message'    => 'You can\'t delete owner',
                 'status' => 'danger',
             ]);
         }
@@ -234,7 +234,7 @@ class UserController extends Controller
             return UserResource::collection(User::where('name', 'like', '%' . $searchKey . '%')->paginate(8));
         } else {
             return response()->json([
-                'msg'    => 'Error while retriving Users. No Data Supplied as key.',
+                'message'    => 'Error while retriving Users. No Data Supplied as key.',
                 'status' => 'danger',
             ]);
         }

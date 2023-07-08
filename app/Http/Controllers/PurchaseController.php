@@ -117,11 +117,11 @@ class PurchaseController extends Controller
             $purchase_status_save = true;
         } else {
 
-            $jsonResponse = ['msg' => 'Failed updating the Data to the store.', 'status' => 'error'];
+            $jsonResponse = ['message' => 'Failed updating the Data to the store.', 'status' => 'error'];
         }
         if ($purchase_status_save) {
 
-            $jsonResponse = ['msg' => 'Successfully created purchase & update store data ', 'status' => 'success'];
+            $jsonResponse = ['message' => 'Successfully created purchase & update store data ', 'status' => 'success'];
         }
         return response()->json($jsonResponse);
     }
@@ -192,13 +192,13 @@ class PurchaseController extends Controller
 
         if ($purchase) {
             return response()->json([
-                'msg' => 'Purchases updated successfully',
+                'message' => 'Purchases updated successfully',
                 'purchase' => $purchase,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while updating Purchase',
+                'message' => 'Error while updating Purchase',
                 'status' => 'danger',
             ], 500);
         }
@@ -212,13 +212,13 @@ class PurchaseController extends Controller
         
         if ($purchase) {
             return response()->json([
-                'msg' => 'Purchases fetched successfully',
+                'message' => 'Purchases fetched successfully',
                 'purchase' => $purchase,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Purchase',
+                'message' => 'Error while retriving Purchase',
                 'status' => 'danger',
             ], 500);
         }

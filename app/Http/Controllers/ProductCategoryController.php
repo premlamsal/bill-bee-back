@@ -61,18 +61,18 @@ class ProductCategoryController extends Controller
             if ($store->save()) {
 
                 return response()->json([
-                    'msg' => 'Category added successfully',
+                    'message' => 'Category added successfully',
                     'status' => 'success',
                 ]);
             } else {
                 return response()->json([
-                    'msg' => 'Failed to update data to store ',
+                    'message' => 'Failed to update data to store ',
                     'status' => 'error',
                 ]);
             }
         } else {
             return response()->json([
-                'msg' => 'Category fail to add ',
+                'message' => 'Category fail to add ',
                 'status' => 'error',
             ]);
         }
@@ -95,12 +95,12 @@ class ProductCategoryController extends Controller
      
         if ($category->save()) {
             return response()->json([
-                'msg' => 'Category updated successfully',
+                'message' => 'Category updated successfully',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Category fail to update ',
+                'message' => 'Category fail to update ',
                 'status' => 'error',
             ]);
         }
@@ -112,12 +112,12 @@ class ProductCategoryController extends Controller
         $category = Category::where('id', $id)->where('store_id',$store_id)->first();
         if ($category->delete()) {
             return response()->json([
-                'msg' => 'Category deleted successfully',
+                'message' => 'Category deleted successfully',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Category deletion failed',
+                'message' => 'Category deletion failed',
                 'status' => 'error',
             ]);
         }
@@ -129,13 +129,13 @@ class ProductCategoryController extends Controller
         $category = Category::where('id', $id)->where('store_id',$store_id)->first();
         if ($category) {
             return response()->json([
-                'msg' => 'Category fetched successfully',
+                'message' => 'Category fetched successfully',
                 'category' => $category,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Category',
+                'message' => 'Error while retriving Category',
                 'status' => 'error',
             ]);
         }
@@ -150,7 +150,7 @@ class ProductCategoryController extends Controller
             return ProductCategoryResource::collection(Category::where('store_id',$store_id)->where('name', 'like', '%' . $searchKey . '%')->get());
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Category. No Data Supplied as key.',
+                'message' => 'Error while retriving Category. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }

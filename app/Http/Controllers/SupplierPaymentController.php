@@ -75,7 +75,7 @@ class SupplierPaymentController extends Controller
                     if ($account->save()) {
                         //success code
                         return response()->json([
-                            'msg' => 'Supplier Payment, Transaction & Account successfully added ',
+                            'message' => 'Supplier Payment, Transaction & Account successfully added ',
                             'status' => 'success',
                         ]);
                     }
@@ -88,7 +88,7 @@ class SupplierPaymentController extends Controller
             } else {
                 //fail code
                 return response()->json([
-                    'msg' => 'Erros while saving supplier transaction ',
+                    'message' => 'Erros while saving supplier transaction ',
                     'status' => 'error',
                 ]);
             }
@@ -96,7 +96,7 @@ class SupplierPaymentController extends Controller
         } else {
             //fail code
             return response()->json([
-                'msg' => 'Erros while saving supplier payment ',
+                'message' => 'Erros while saving supplier payment ',
                 'status' => 'error',
             ]);
         }
@@ -185,7 +185,7 @@ class SupplierPaymentController extends Controller
                     $account->save();
 
                     return response()->json([
-                        'msg' => 'Supplier Payment , Transaction & Accounts successfully updated ',
+                        'message' => 'Supplier Payment , Transaction & Accounts successfully updated ',
                         'status' => 'success',
                     ]);
                 }
@@ -200,7 +200,7 @@ class SupplierPaymentController extends Controller
             } else {
                 //fail code
                 return response()->json([
-                    'msg' => 'Erros while updating supplier transaction ',
+                    'message' => 'Erros while updating supplier transaction ',
                     'status' => 'error',
                 ]);
             }
@@ -208,7 +208,7 @@ class SupplierPaymentController extends Controller
         } else {
             //fail code
             return response()->json([
-                'msg' => 'Erros while updating supplier payment ',
+                'message' => 'Erros while updating supplier payment ',
                 'status' => 'error',
             ]);
         }
@@ -247,7 +247,7 @@ class SupplierPaymentController extends Controller
 
 
                         return response()->json([
-                            'msg' => 'Deleted successfully!! ',
+                            'message' => 'Deleted successfully!! ',
                             'status' => 'success',
                         ]);
                     }
@@ -258,14 +258,14 @@ class SupplierPaymentController extends Controller
 
             } else {
                 return response()->json([
-                    'msg' => 'Error while deleting supplier transaction for payment',
+                    'message' => 'Error while deleting supplier transaction for payment',
                     'status' => 'error',
                 ]);
             }
 
         } else {
             return response()->json([
-                'msg' => 'Error while deleting supplier payment',
+                'message' => 'Error while deleting supplier payment',
                 'status' => 'error',
             ]);
         }

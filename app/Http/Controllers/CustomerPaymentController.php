@@ -35,7 +35,8 @@ class CustomerPaymentController extends Controller
 
         $user = User::findOrFail(Auth::user()->id);
 
-        $store_id = $user->stores[0]->id;
+        $store_id= Auth::user()->default_store;
+
 
         $payment = new CustomerPayment();
         $payment->customer_id = $request->input('customer_id');
@@ -75,7 +76,7 @@ class CustomerPaymentController extends Controller
                     if ($account->save()) {
                         //success code
                         return response()->json([
-                            'msg' => 'Customer Payment, Transaction & Account successfully added ',
+                            'message' => 'Customer Payment, Transaction & Account successfully added ',
                             'status' => 'success',
                         ]);
                     }
@@ -83,14 +84,14 @@ class CustomerPaymentController extends Controller
             } else {
                 //fail code
                 return response()->json([
-                    'msg' => 'Erros while saving customer transaction ',
+                    'message' => 'Erros while saving customer transaction ',
                     'status' => 'error',
                 ]);
             }
         } else {
             //fail code
             return response()->json([
-                'msg' => 'Erros while saving customer payment ',
+                'message' => 'Erros while saving customer payment ',
                 'status' => 'error',
             ]);
         }
@@ -100,7 +101,8 @@ class CustomerPaymentController extends Controller
 
         $user = User::findOrFail(Auth::user()->id);
 
-        $store_id = $user->stores[0]->id;
+        $store_id= Auth::user()->default_store;
+
 
         $payment = CustomerPayment::where('store_id', $store_id)->where('id', $request->payment_id)->get();
 
@@ -128,7 +130,8 @@ class CustomerPaymentController extends Controller
 
         $user = User::findOrFail(Auth::user()->id);
 
-        $store_id = $user->stores[0]->id;
+        $store_id= Auth::user()->default_store;
+
 
         $payment = CustomerPayment::where('id', $request->input('payment_id'))->where('store_id', $store_id)->first();
         $payment->customer_id = $request->input('customer_id');
@@ -186,32 +189,35 @@ class CustomerPaymentController extends Controller
                     $account->save();
 
                     return response()->json([
-                        'msg' => 'Customer Payment , Transaction & Accounts successfully updated ',
+                        'message' => 'Customer Payment , Transaction & Accounts successfully updated ',
                         'status' => 'success',
                     ]);
                 }
             } else {
                 //fail code
                 return response()->json([
-                    'msg' => 'Erros while updating customer transaction ',
+                    'message' => 'Erros while updating customer transaction ',
                     'status' => 'error',
                 ]);
             }
         } else {
             //fail code
             return response()->json([
-                'msg' => 'Erros while updating customer payment ',
+                'message' => 'Erros while updating customer payment ',
                 'status' => 'error',
             ]);
         }
     }
+   
+
     public function destroy($payment_id)
     {
         $this->authorize('hasPermission', 'delete_customer_payment');
 
         $user = User::findOrFail(Auth::user()->id);
 
-        $store_id = $user->stores[0]->id;
+        $store_id= Auth::user()->default_store;
+
 
         $CustomerPayment = CustomerPayment::where('store_id', $store_id)->where('id', $payment_id)->first();
         if ($CustomerPayment->delete()) {
@@ -237,20 +243,20 @@ class CustomerPaymentController extends Controller
 
 
                         return response()->json([
-                            'msg' => 'Deleted successfully!! ',
+                            'message' => 'Deleted successfully!! ',
                             'status' => 'success',
                         ]);
                     }
                 }
             } else {
                 return response()->json([
-                    'msg' => 'Error while deleting customer transaction for payment',
+                    'message' => 'Error while deleting customer transaction for payment',
                     'status' => 'error',
                 ]);
             }
         } else {
             return response()->json([
-                'msg' => 'Error while deleting customer payment',
+                'message' => 'Error while deleting customer payment',
                 'status' => 'error',
             ]);
         }

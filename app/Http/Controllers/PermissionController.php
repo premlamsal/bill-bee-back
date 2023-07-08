@@ -29,7 +29,7 @@ class PermissionController extends Controller
 
 
         // return response()->json([
-        //     'msg'    => $store_id,
+        //     'message'    => $store_id,
         //     'status' => 'success',
         // ]);
 
@@ -62,12 +62,12 @@ class PermissionController extends Controller
         if ($permission->save()) {
 
             return response()->json([
-                'msg'    => 'You have successfully added the information.',
+                'message'    => 'You have successfully added the information.',
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg'    => 'Opps! My Back got cracked while working in Database',
+                'message'    => 'Opps! My Back got cracked while working in Database',
                 'status' => 'error',
             ]);
         }
@@ -87,13 +87,13 @@ class PermissionController extends Controller
         $permission->actions= explode(',',$permission->value('actions'));
         if ($permission) {
             return response()->json([
-                'msg' => 'Permission fetched successfully',
+                'message' => 'Permission fetched successfully',
                 'permission' => $permission,
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Permission',
+                'message' => 'Error while retriving Permission',
                 'status' => 'error',
             ]);
         }
@@ -135,7 +135,7 @@ class PermissionController extends Controller
 
             return response()->json([
 
-                'msg'    => "Record Updated successfully",
+                'message'    => "Record Updated successfully",
 
                 'status' => 'success',
             ]);
@@ -143,7 +143,7 @@ class PermissionController extends Controller
 
             return response()->json([
 
-                'msg'    => 'Error Updating Data',
+                'message'    => 'Error Updating Data',
 
                 'status' => 'error',
             ]);
@@ -163,14 +163,14 @@ class PermissionController extends Controller
 
             return response()->json([
 
-                'msg'    => 'successfully Deleted',
+                'message'    => 'successfully Deleted',
 
                 'status' => 'success',
             ]);
         } else {
             return response()->json([
 
-                'msg'    => 'Error while deleting data',
+                'message'    => 'Error while deleting data',
 
                 'status' => 'error',
             ]);
@@ -187,7 +187,7 @@ class PermissionController extends Controller
             return PermissionResource::collection(Permission::where('store_id', $store_id)->where('short_name', 'like', '%' . $searchKey . '%')->where('store_id', $store_id)->paginate(8));
         } else {
             return response()->json([
-                'msg'    => 'Error while retriving Permissions. No Data Supplied as key.',
+                'message'    => 'Error while retriving Permissions. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }
