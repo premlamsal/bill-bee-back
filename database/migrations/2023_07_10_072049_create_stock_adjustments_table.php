@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('stock_adjustments', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('product_id');
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+
+            $table->unsignedBigInteger('stock_id');
+
+            $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade');
 
             $table->date('date');
 
@@ -32,7 +37,6 @@ return new class extends Migration
             $table->unsignedBigInteger('store_id');
 
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
-
             $table->timestamps();
         });
     }
