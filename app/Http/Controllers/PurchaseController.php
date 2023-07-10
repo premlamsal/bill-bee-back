@@ -147,11 +147,11 @@ class PurchaseController extends Controller
 
                             $purchase_status_save = true;
                         } else {
-                            $jsonResponse = ['msg' => 'Failed updating the Data to the store.', 'status' => 'error3'];
+                            $jsonResponse = ['message' => 'Failed updating the Data to the store.', 'status' => 'error3'];
                         }
                     } else {
 
-                        $jsonResponse = ['msg' => 'Failed Saving the Data to the Stock.', 'status' => 'error3'];
+                        $jsonResponse = ['message' => 'Failed Saving the Data to the Stock.', 'status' => 'error3'];
                     }
                 } else { //the price is diff so we have to add new stock for the new price of that product
 
@@ -182,11 +182,11 @@ class PurchaseController extends Controller
 
                             $purchase_status_save = true;
                         } else {
-                            $jsonResponse = ['msg' => 'Failed updating the Data to the store.', 'status' => 'error3'];
+                            $jsonResponse = ['message' => 'Failed updating the Data to the store.', 'status' => 'error3'];
                         }
                     } else {
 
-                        $jsonResponse = ['msg' => 'Failed Saving the Data to the Stock.', 'status' => 'error3'];
+                        $jsonResponse = ['message' => 'Failed Saving the Data to the Stock.', 'status' => 'error3'];
                     }
                 }
             } else {
@@ -204,10 +204,10 @@ class PurchaseController extends Controller
             $SupplierTransaction->store_id = $data['store_id'];
             $SupplierTransaction->date = $data['purchase_date'];
             if ($SupplierTransaction->save()) {
-                $jsonResponse = ['msg' => 'Successfully created purchase', 'status' => 'success'];
+                $jsonResponse = ['message' => 'Successfully created purchase', 'status' => 'success'];
             } else {
 
-                $jsonResponse = ['msg' => 'Error adding purchase to supplier transaction.', 'status' => 'error'];
+                $jsonResponse = ['message' => 'Error adding purchase to supplier transaction.', 'status' => 'error'];
             }
         }
 
@@ -320,13 +320,13 @@ class PurchaseController extends Controller
                 // $SupplierTransaction->store_id = $data['store_id'];
                 $SupplierTransaction->date = $data['purchase_date'];
                 if ($SupplierTransaction->save()) {
-                    return response()->json(['msg' => 'You have successfully updated the Purchase.', 'status' => 'success']);
+                    return response()->json(['message' => 'You have successfully updated the Purchase.', 'status' => 'success']);
                 } else {
-                    return response()->json(['msg' => 'Error adding purchase to supplier transaction.', 'status' => 'success'], 500);
+                    return response()->json(['message' => 'Error adding purchase to supplier transaction.', 'status' => 'success'], 500);
                 }
             } else {
                 //saving stock fails
-                return response()->json(['msg' => 'Initial update to stock failed.', 'status' => 'error'], 500);
+                return response()->json(['message' => 'Initial update to stock failed.', 'status' => 'error'], 500);
             }
 
             // check stock save status and do following
@@ -334,7 +334,7 @@ class PurchaseController extends Controller
         } else {
 
             return response()->json([
-                'msg' => 'Update Failed. There is no items in this purchase',
+                'message' => 'Update Failed. There is no items in this purchase',
                 'status' => 'error',
             ], 500);
         }
@@ -398,12 +398,12 @@ class PurchaseController extends Controller
                 if ($Purchase->delete()) {
 
                     return response()->json([
-                        'msg' => 'successfully Deleted',
+                        'message' => 'successfully Deleted',
                         'status' => 'success',
                     ]);
                 } else {
                     return response()->json([
-                        'msg' => 'Delete Failed',
+                        'message' => 'Delete Failed',
                         'status' => 'error',
                     ]);
                 }
@@ -423,7 +423,7 @@ class PurchaseController extends Controller
             return PurchaseResource::collection(Purchase::where('store_id', $store_id)->where('customer_name', 'like', '%' . $searchKey . '%')->get());
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Purchases. No Data Supplied as key.',
+                'message' => 'Error while retriving Purchases. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }

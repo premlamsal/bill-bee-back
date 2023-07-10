@@ -150,17 +150,17 @@ class InvoiceController extends Controller
 
                     } else {
 
-                        $jsonResponse = ['msg' => 'Failed updating the Data to the store.', 'status' => 'error'];
+                        $jsonResponse = ['message' => 'Failed updating the Data to the store.', 'status' => 'error'];
 
                     }
                 } else {
 
-                    $jsonResponse = ['msg' => 'Failed Saving the Data to the Stock.', 'status' => 'error'];
+                    $jsonResponse = ['message' => 'Failed Saving the Data to the Stock.', 'status' => 'error'];
 
                 }
 
             } else {
-                $jsonResponse = ['msg' => 'You dont have Stock.', 'status' => 'error'];
+                $jsonResponse = ['message' => 'You dont have Stock.', 'status' => 'error'];
             }
 
         }
@@ -173,10 +173,10 @@ class InvoiceController extends Controller
             $CustomerTransaction->store_id = $data['store_id'];
             $CustomerTransaction->date = $data['invoice_date'];
             if ($CustomerTransaction->save()) {
-                $jsonResponse = ['msg' => 'Successfully created invoice & customer transactions', 'status' => 'success'];
+                $jsonResponse = ['message' => 'Successfully created invoice & customer transactions', 'status' => 'success'];
             } else {
 
-                $jsonResponse = ['msg' => 'Error adding invoice to customer transaction.', 'status' => 'error'];
+                $jsonResponse = ['message' => 'Error adding invoice to customer transaction.', 'status' => 'error'];
 
             }
         }
@@ -291,17 +291,17 @@ class InvoiceController extends Controller
                 // $CustomerTransaction->store_id = $data['store_id'];
                 $CustomerTransaction->date = $data['invoice_date'];
                 if ($CustomerTransaction->save()) {
-                return response()->json(['msg' => 'You have successfully updated the Invoice.', 'status' => 'success']);
+                return response()->json(['message' => 'You have successfully updated the Invoice.', 'status' => 'success']);
 
                 } else {
-                return response()->json(['msg' => 'Error adding invoice to customer transaction.', 'status' => 'success'],500);
+                return response()->json(['message' => 'Error adding invoice to customer transaction.', 'status' => 'success'],500);
 
                 }
 
 
             } else {
                 //saving stock fails
-                return response()->json(['msg' => 'Initial update to stock failed.', 'status' => 'error'],500);
+                return response()->json(['message' => 'Initial update to stock failed.', 'status' => 'error'],500);
             }
 
             // check stock save status and do following
@@ -309,7 +309,7 @@ class InvoiceController extends Controller
         } else {
 
             return response()->json([
-                'msg' => 'Update Failed. There is no items in this invoice',
+                'message' => 'Update Failed. There is no items in this invoice',
                 'status' => 'error',
             ], 500);
         }
@@ -413,12 +413,12 @@ class InvoiceController extends Controller
 
                     $invoice->InvoiceDetail()->saveMany($items);
 
-                    return response()->json(['msg' => 'You have successfully return the invoice.', 'status' => 'success']);
+                    return response()->json(['message' => 'You have successfully return the invoice.', 'status' => 'success']);
 
                 }
             }
         }
-        return response()->json(['msg' => 'Failed while returning invoice. Check your stock quanity.', 'status' => 'error']);
+        return response()->json(['message' => 'Failed while returning invoice. Check your stock quanity.', 'status' => 'error']);
     }
 
     public function show($id)
@@ -485,19 +485,19 @@ class InvoiceController extends Controller
                         $CustomerTransaction = CustomerTransaction::where('refID',$Invoice->id)->where('store_id',$store_id)->first();
                             if($CustomerTransaction->delete()){
                                 return response()->json([
-                                    'msg' => 'successfully Deleted',
+                                    'message' => 'successfully Deleted',
                                     'status' => 'success',
                                 ]);
                             }else{
                                 return response()->json([
-                                    'msg' => 'Customer Transaction Delete Failed',
+                                    'message' => 'Customer Transaction Delete Failed',
                                     'status' => 'error',
                                 ]);
                             }
                      
                     } else {
                         return response()->json([
-                            'msg' => 'Invoice Delete Failed',
+                            'message' => 'Invoice Delete Failed',
                             'status' => 'error',
                         ]);
                     }
@@ -510,12 +510,12 @@ class InvoiceController extends Controller
             if ($Invoice->delete()) {
 
                 return response()->json([
-                    'msg' => 'Successfully Deleted',
+                    'message' => 'Successfully Deleted',
                     'status' => 'success',
                 ]);
             } else {
                 return response()->json([
-                    'msg' => 'Delete Failed',
+                    'message' => 'Delete Failed',
                     'status' => 'error',
                 ]);
             }
@@ -537,7 +537,7 @@ class InvoiceController extends Controller
             return InvoiceResource::collection(Invoice::where('store_id', $store_id)->where('customer_name', 'like', '%' . $searchKey . '%')->paginate(8));
         } else {
             return response()->json([
-                'msg' => 'Error while retriving Invoices. No Data Supplied as key.',
+                'message' => 'Error while retriving Invoices. No Data Supplied as key.',
                 'status' => 'error',
             ]);
         }
