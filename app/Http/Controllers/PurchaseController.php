@@ -25,18 +25,17 @@ class PurchaseController extends Controller
     {
         $store_id = Auth::user()->default_store;
 
-        return PurchaseResource::collection(Purchase::where('store_id',$store_id)->with('purchaseDetail')->orderBy('updated_at', 'desc')->paginate(8));
+        return PurchaseResource::collection(Purchase::where('store_id', $store_id)->with('purchaseDetail')->orderBy('updated_at', 'desc')->paginate(8));
     }
 
     public function store(Request $request)
     {
         $purchase_status_save = false;
 
-        $this->authorize('hasPermission', 'add_purchase');
+        // $this->authorize('hasPermission', 'add_purchase');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
         //validation
         $this->validate($request, [
 
@@ -217,11 +216,10 @@ class PurchaseController extends Controller
     public function update(Request $request)
     {
 
-        $this->authorize('hasPermission', 'edit_purchase');
+        // $this->authorize('hasPermission', 'edit_purchase');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
         // //validation
         $this->validate($request, [
 
@@ -345,9 +343,9 @@ class PurchaseController extends Controller
     {
 
         $store_id = Auth::user()->default_store;
-        
-        $purchase = Purchase::where('store_id',$store_id)->where('custom_purchase_id', $id)->with('purchaseDetail.product.unit')->with('supplier')->first();
-        
+
+        $purchase = Purchase::where('store_id', $store_id)->where('custom_purchase_id', $id)->with('purchaseDetail.product.unit')->with('supplier')->first();
+
         if ($purchase) {
             return response()->json([
                 'message' => 'Purchases fetched successfully',
@@ -364,9 +362,8 @@ class PurchaseController extends Controller
     public function destroy($id)
     {
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
         // Get Purchase
         $Purchase = Purchase::where('id', $id)->where('store_id', $store_id)->first();
 
@@ -416,11 +413,10 @@ class PurchaseController extends Controller
     public function searchPurchases(Request $request)
     {
 
-        $this->authorize('hasPermission', 'search_purchase');
+        // $this->authorize('hasPermission', 'search_purchase');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
