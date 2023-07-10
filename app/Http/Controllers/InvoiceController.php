@@ -318,11 +318,10 @@ class InvoiceController extends Controller
     public function returnInvoice(Request $request)
     {
 
-        $this->authorize('hasPermission', 'return_invoice');
+        // $this->authorize('hasPermission', 'return_invoice');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
         // //validation
         $this->validate($request, [
 
@@ -443,11 +442,10 @@ class InvoiceController extends Controller
 
     public function destroy($id)
     {
-        $this->authorize('hasPermission', 'delete_invoice');
+        // $this->authorize('hasPermission', 'delete_invoice');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
 
         // Get Invoice
         $Invoice = Invoice::where('id', $id)->where('store_id', $store_id)->first();
@@ -527,11 +525,10 @@ class InvoiceController extends Controller
     public function searchInvoices(Request $request)
     {
 
-        $this->authorize('hasPermission', 'search_invoice');
+        // $this->authorize('hasPermission', 'search_invoice');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
