@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Models\CustomerPayment;
@@ -10,25 +9,25 @@ use App\Models\CustomerTransaction;
 use App\Models\Invoice;
 use App\Models\Store;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
-
     public function __construct()
     {
-
         $this->middleware('auth:api');
 
         // Auth::user()->name,
-
     }
+
     public function index()
     {
         $store_id = Auth::user()->default_store;
 
         return CustomerResource::collection(Customer::where('store_id', $store_id)->orderBy('updated_at', 'desc')->paginate(8));
     }
+
     public function store(Request $request)
     {
         $this->validate($request, [
@@ -39,7 +38,6 @@ class CustomerController extends Controller
             'opening_balance' => 'required|numeric',
 
         ]);
-
 
         $store_id = Auth::user()->default_store;
 
@@ -64,23 +62,17 @@ class CustomerController extends Controller
         $customer->custom_customer_id = $custom_customer_id;
         $customer->store_id = $store_id;
         if ($customer->save()) {
-
-
-
             $customerTransaction = new CustomerTransaction();
             $customerTransaction->transaction_type = 'opening_balance';
             $customerTransaction->refID = '0';
+            $customerTransaction->date=date('d-m-Y');
             $customerTransaction->amount = $request->input('opening_balance');
             $customerTransaction->customer_id = $customer->id;
             $customerTransaction->store_id = $store_id;
             if ($customerTransaction->save()) {
-
-
                 $store->customer_id_count = $custom_customer_id;
 
                 if ($store->save()) {
-
-
                     return response()->json([
                         'message' => 'Customer added successfully',
                         'status' => 'success',
@@ -104,9 +96,9 @@ class CustomerController extends Controller
             ]);
         }
     }
+
     public function update(Request $request)
     {
-
         $this->validate($request, [
             'name' => 'required|regex:/^[\pL\s\-]+$/u',
             'address' => 'required|string|max:200',
@@ -173,6 +165,7 @@ class CustomerController extends Controller
             ]);
         }
     }
+
     public function show($id)
     {
         $store_id = Auth::user()->default_store;
@@ -202,6 +195,7 @@ class CustomerController extends Controller
             ]);
         }
     }
+
     public function showByCustomCustomerID($custom_customer_id)
     {
         $store_id = Auth::user()->default_store;
@@ -221,23 +215,23 @@ class CustomerController extends Controller
             ]);
         }
     }
+
     public function getPayments($customer_id)
     {
-
-
         $store_id = Auth::user()->default_store;
 
         $CustomerPayments = CustomerPayment::where('store_id', $store_id)->where('customer_id', $customer_id)->get();
 
         return response()->json(['data' => $CustomerPayments, 'status' => 'success']);
     }
+
     public function searchCustomers(Request $request)
     {
         $store_id = Auth::user()->default_store;
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
-            return CustomerResource::collection(Customer::where('store_id', $store_id)->where('name', 'like', '%' . $searchKey . '%')->get());
+            return CustomerResource::collection(Customer::where('store_id', $store_id)->where('name', 'like', '%'.$searchKey.'%')->get());
         } else {
             return response()->json([
                 'message' => 'Error while retriving Customer. No Data Supplied as key.',

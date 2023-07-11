@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Supplier;
 use App\Models\SupplierTransaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,11 +20,11 @@ class SupplierTransactionController extends Controller
         
         // $this->authorize('hasPermission','view_supplier_transactions');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
+        
+        $supplier_id_db= Supplier::where('custom_supplier_id',$supplier_id)->where('store_id',$store_id)->value('id');
 
-        $store_id = $user->stores[0]->id;
-
-        $SupplierTransaction=SupplierTransaction::where('supplier_id',$supplier_id)->where('store_id',$store_id)->get();
+        $SupplierTransaction=SupplierTransaction::where('supplier_id',$supplier_id_db)->where('store_id',$store_id)->get();
         $transactions=array();
         $balance=0.00;
         for($i=0;$i<$SupplierTransaction->count();$i++){

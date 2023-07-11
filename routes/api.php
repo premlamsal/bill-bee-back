@@ -148,6 +148,8 @@ Route::post('/supplier/edit', [SupplierController::class, 'update']);
 Route::get('/supplier/{id}', [SupplierController::class, 'show']);
 
 
+Route::get('/custom-supplier/{id}', [SupplierController::class, 'showByCustomSupplierID']);
+
 Route::post('/suppliers/search', [SupplierController::class, 'searchSuppliers']);
 //end of customer
 

@@ -15,14 +15,16 @@ class SupplierController extends Controller
 {
     public function __construct()
     {
-
         $this->middleware('auth:api');
     }
+
     public function index()
     {
         $store_id = Auth::user()->default_store;
+
         return SupplierResource::collection(Supplier::where('store_id', $store_id)->orderBy('updated_at', 'desc')->paginate(8));
     }
+
     public function store(Request $request)
     {
         $this->validate($request, [
@@ -33,7 +35,6 @@ class SupplierController extends Controller
             'opening_balance' => 'required|numeric',
 
         ]);
-
 
         //let store =1;
         $store_id = Auth::user()->default_store;
@@ -58,21 +59,17 @@ class SupplierController extends Controller
         $supplier->custom_supplier_id = $custom_supplier_id;
         $supplier->store_id = $store_id;
         if ($supplier->save()) {
-
-
-
             $SupplierTransaction = new SupplierTransaction();
             $SupplierTransaction->transaction_type = 'opening_balance';
             $SupplierTransaction->refID = '0';
+            $SupplierTransaction->date=date('d-m-Y');
             $SupplierTransaction->amount = $request->input('opening_balance');
             $SupplierTransaction->supplier_id = $supplier->id;
             $SupplierTransaction->store_id = $store_id;
             if ($SupplierTransaction->save()) {
-
                 $store->supplier_id_count = $custom_supplier_id;
 
                 if ($store->save()) {
-
                     return response()->json([
                         'message' => 'Supplier added successfully',
                         'status' => 'success',
@@ -96,9 +93,9 @@ class SupplierController extends Controller
             ]);
         }
     }
+
     public function update(Request $request)
     {
-
         $this->validate($request, [
             'name' => 'required|regex:/^[\pL\s\-]+$/u',
             'address' => 'required|string|max:200',
@@ -112,7 +109,6 @@ class SupplierController extends Controller
 
         $store_id = Auth::user()->default_store;
 
-
         $supplier = Supplier::where('store_id', $store_id)->where('id', $id)->first();
 
         $supplier->name = $request->input('name');
@@ -121,38 +117,53 @@ class SupplierController extends Controller
         $supplier->details = $request->input('details');
         $supplier->opening_balance = $request->input('opening_balance');
         if ($supplier->save()) {
-
-            $SupplierTransaction = SupplierTransaction::where('supplier_id',$supplier->id)->where('transaction_type','opening_balance')->first();
+            $SupplierTransaction = SupplierTransaction::where('supplier_id', $supplier->id)->where('transaction_type', 'opening_balance')->first();
             $SupplierTransaction->amount = $request->input('opening_balance');
             if ($SupplierTransaction->save()) {
                 return response()->json([
                     'msg' => 'Supplier updated successfully',
                     'status' => 'success',
                 ]);
-
-            }else{
+            } else {
                 return response()->json([
                     'msg' => 'Error while updating Supplier transaction',
                     'status' => 'error',
-                ]); 
+                ]);
             }
         } else {
-
             return response()->json([
 
-                'msg'    => 'Error while updating supplier',
+                'msg' => 'Error while updating supplier',
+                'status' => 'error',
+            ]);
+        }
+    }
+    public function showByCustomSupplierID($custom_supplier_id)
+    {
+        $store_id = Auth::user()->default_store;
+
+        $supplier = Supplier::where('custom_supplier_id', $custom_supplier_id)->where('store_id', $store_id)->first();
+
+        if ($supplier) {
+            return response()->json([
+                'message' => 'Supplier fetched successfully',
+                'supplier' => $supplier,
+                'status' => 'success',
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Error while retriving Supplier',
                 'status' => 'error',
             ]);
         }
     }
     public function destroy($id)
     {
-
         $store_id = Auth::user()->default_store;
 
         $supplier = Supplier::where('store_id', $store_id)->where('id', $id)->first();
         if ($supplier->delete()) {
-            $SupplierTransaction = SupplierTransaction::where('customer_id', $supplier->id)->where('transaction_type', 'opening_balance')->first();
+            $SupplierTransaction = SupplierTransaction::where('supplier_id', $supplier->id)->where('transaction_type', 'opening_balance')->first();
             if ($SupplierTransaction->delete()) {
                 return response()->json([
                     'msg' => 'successfully Deleted',
@@ -166,28 +177,28 @@ class SupplierController extends Controller
             }
         } else {
             return response()->json([
-                'msg'    => 'Error while deleting data',
+                'msg' => 'Error while deleting data',
                 'status' => 'error',
             ]);
         }
     }
+
     public function show($id)
     {
-
         $store_id = Auth::user()->default_store;
 
         $supplier = Supplier::where('id', $id)->where('store_id', $store_id)->first();
 
-        $purchase_amount=Purchase::where('store_id',$store_id)->where('supplier_id',$id)->sum('grand_total');
-        $paid_amount=SupplierPayment::where('store_id',$store_id)->where('supplier_id',$id)->sum('amount');
-        $balance_due=floatval($purchase_amount)-floatval($paid_amount)-floatval($supplier->opening_balance);
+        $purchase_amount = Purchase::where('store_id', $store_id)->where('supplier_id', $id)->sum('grand_total');
+        $paid_amount = SupplierPayment::where('store_id', $store_id)->where('supplier_id', $id)->sum('amount');
+        $balance_due = floatval($purchase_amount) - floatval($paid_amount) - floatval($supplier->opening_balance);
 
         if ($supplier->save()) {
             return response()->json([
                 'supplier' => $supplier,
-                'purchase_amount'=>$purchase_amount,
-                'paid_amount'=>$paid_amount,
-                'balance_due'=>$balance_due,
+                'purchase_amount' => $purchase_amount,
+                'paid_amount' => $paid_amount,
+                'balance_due' => $balance_due,
                 'status' => 'success',
                 'message' => 'Supplier fetched successfully',
             ]);
@@ -201,16 +212,12 @@ class SupplierController extends Controller
 
     public function getPayments($supplier_id)
     {
-
-
         $store_id = Auth::user()->default_store;
-
 
         $SupplierPayments = SupplierPayment::where('store_id', $store_id)->where('supplier_id', $supplier_id)->get();
 
         return response()->json(['data' => $SupplierPayments, 'status' => 'success']);
     }
-
 
     public function searchSuppliers(Request $request)
     {
@@ -218,7 +225,7 @@ class SupplierController extends Controller
 
         $searchKey = $request->input('searchQuery');
         if ($searchKey != '') {
-            return SupplierResource::collection(Supplier::where('store_id', $store_id)->where('name', 'like', '%' . $searchKey . '%')->get());
+            return SupplierResource::collection(Supplier::where('store_id', $store_id)->where('name', 'like', '%'.$searchKey.'%')->get());
         } else {
             return response()->json([
                 'message' => 'Error while retriving Supplier. No Data Supplied as key.',
