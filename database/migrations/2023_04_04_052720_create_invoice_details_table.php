@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('quantity');
             $table->string('price');
             $table->unsignedBigInteger('unit_id');
+            $table->unsignedBigInteger('stock_id');
+            $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade');
             $table->foreign('unit_id')->references('id')->on('units')->onDelete('cascade');
             $table->string('line_total');
             $table->timestamps();

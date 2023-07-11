@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use App\Models\CustomerPayment;
+use App\Models\CustomerTransaction;
+use App\Models\Invoice;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -63,17 +65,35 @@ class CustomerController extends Controller
         $customer->store_id = $store_id;
         if ($customer->save()) {
 
-            $store->customer_id_count = $custom_customer_id;
 
-            if ($store->save()) {
 
-                return response()->json([
-                    'message' => 'Customer added successfully',
-                    'status' => 'success',
-                ]);
+            $customerTransaction = new CustomerTransaction();
+            $customerTransaction->transaction_type = 'opening_balance';
+            $customerTransaction->refID = '0';
+            $customerTransaction->amount = $request->input('opening_balance');
+            $customerTransaction->customer_id = $customer->id;
+            $customerTransaction->store_id = $store_id;
+            if ($customerTransaction->save()) {
+
+
+                $store->customer_id_count = $custom_customer_id;
+
+                if ($store->save()) {
+
+
+                    return response()->json([
+                        'message' => 'Customer added successfully',
+                        'status' => 'success',
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Failed to update data to store ',
+                        'status' => 'error',
+                    ]);
+                }
             } else {
                 return response()->json([
-                    'message' => 'Failed to update data to store ',
+                    'msg' => 'Error while adding customer transaction',
                     'status' => 'error',
                 ]);
             }
@@ -107,13 +127,22 @@ class CustomerController extends Controller
         $customer->opening_balance = $request->input('opening_balance');
 
         if ($customer->save()) {
-            return response()->json([
-                'message' => 'Customer updated successfully',
-                'status' => 'success',
-            ]);
+            $customerTransaction = CustomerTransaction::where('customer_id', $customer->id)->where('transaction_type', 'opening_balance')->first();
+            $customerTransaction->amount = $request->input('opening_balance');
+            if ($customerTransaction->save()) {
+                return response()->json([
+                    'msg' => 'Customer updated successfully',
+                    'status' => 'success',
+                ]);
+            } else {
+                return response()->json([
+                    'msg' => 'Error while updating customer transaction',
+                    'status' => 'error',
+                ]);
+            }
         } else {
             return response()->json([
-                'message' => 'Customer fail to update ',
+                'msg' => 'Error while updating customer',
                 'status' => 'error',
             ]);
         }
@@ -125,13 +154,21 @@ class CustomerController extends Controller
 
         $customer = Customer::where('id', $id)->where('store_id', $store_id)->first();
         if ($customer->delete()) {
-            return response()->json([
-                'message' => 'Customer deleted successfully',
-                'status' => 'success',
-            ]);
+            $customerTransaction = CustomerTransaction::where('customer_id', $customer->id)->where('transaction_type', 'opening_balance')->first();
+            if ($customerTransaction->delete()) {
+                return response()->json([
+                    'msg' => 'successfully Deleted',
+                    'status' => 'success',
+                ]);
+            } else {
+                return response()->json([
+                    'msg' => 'Error while deleting customer transaction',
+                    'status' => 'error',
+                ]);
+            }
         } else {
             return response()->json([
-                'message' => 'Customer deletion failed',
+                'msg' => 'Error while deleting data',
                 'status' => 'error',
             ]);
         }
@@ -140,17 +177,27 @@ class CustomerController extends Controller
     {
         $store_id = Auth::user()->default_store;
 
-        $customer = Customer::where('id', $id)->where('store_id', $store_id)->first();
+        $customer = Customer::where('store_id', $store_id)->where('id', $id)->first();
 
-        if ($customer) {
+        $invoice_amount = Invoice::where('store_id', $store_id)->where('customer_id', $id)->sum('grand_total');
+
+        $paid_amount = CustomerPayment::where('store_id', $store_id)->where('customer_id', $id)->sum('amount');
+
+        $balance_due = $invoice_amount - $paid_amount + ($customer->opening_balance);
+
+        if ($customer->save()) {
             return response()->json([
-                'message' => 'Customer fetched successfully',
                 'customer' => $customer,
+                'invoice_amount' => $invoice_amount,
+                'paid_amount' => $paid_amount,
+                'balance_due' => $balance_due,
                 'status' => 'success',
+                'msg' => 'Customer Fetched Successfully',
+
             ]);
         } else {
             return response()->json([
-                'message' => 'Error while retriving Customer',
+                'msg' => 'Error while retriving Customer',
                 'status' => 'error',
             ]);
         }
@@ -160,7 +207,7 @@ class CustomerController extends Controller
         $store_id = Auth::user()->default_store;
 
         $customer = Customer::where('custom_customer_id', $custom_customer_id)->where('store_id', $store_id)->first();
-        
+
         if ($customer) {
             return response()->json([
                 'message' => 'Customer fetched successfully',

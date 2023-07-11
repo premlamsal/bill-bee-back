@@ -45,7 +45,7 @@ class PurchaseController extends Controller
             'info.due_date' => 'required | date',
             'info.purchase_date' => 'required | date',
 
-            'info.purchase_reference_number' => 'required | string| max:200',
+            'info.purchase_reference_id' => 'required | string| max:200',
 
             'info.discount' => 'required | numeric| max:200',
 
@@ -95,7 +95,7 @@ class PurchaseController extends Controller
 
         $data['store_id'] = $store_id;
 
-        $data['purchase_reference_id'] = $data['supplier_short_name'] . '-' . $data['purchase_reference_number'];
+        $data['purchase_reference_id'] =  $data['purchase_reference_id'];
 
         $data['custom_purchase_id'] = $new_count_purchase_id;
 

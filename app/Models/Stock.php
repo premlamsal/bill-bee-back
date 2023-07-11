@@ -7,5 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stock extends Model
 {
-    use HasFactory;
+    public function product()
+    {
+        return $this->belongsTo('\App\Models\Product', 'product_id', 'id');
+    }
+    public function unit()
+    {
+        return $this->belongsTo('\App\Models\Unit', 'unit_id', 'id');
+    }
+    protected $fillable = ['product_id', 'quantity', 'unit_id', 'price'];
 }

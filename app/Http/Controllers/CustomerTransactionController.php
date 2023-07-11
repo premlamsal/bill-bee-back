@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\CustomerTransaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,11 +20,12 @@ class CustomerTransactionController extends Controller
         
         // $this->authorize('hasPermission','view_customer_transactions');
 
-        $user = User::findOrFail(Auth::user()->id);
+        $store_id = Auth::user()->default_store;
 
-        $store_id = $user->stores[0]->id;
+        $customer_id_db= Customer::where('custom_customer_id',$customer_id)->where('store_id',$store_id)->value('id');
 
-        $CustomerTransaction=CustomerTransaction::where('customer_id',$customer_id)->where('store_id',$store_id)->get();
+
+        $CustomerTransaction=CustomerTransaction::where('customer_id',$customer_id_db)->where('store_id',$store_id)->get();
        
         $transactions=array();
        
